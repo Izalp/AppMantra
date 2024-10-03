@@ -22,7 +22,7 @@ export const Title = styled.h1`
   margin-bottom: 16px;
 `;
 
-export const Subtitle = styled.p`
-  font-size: 18px;
-  color: #555;
+export const Logo = styled.img`
+  width: 150px; 
+  margin-bottom: 24px;
 `;

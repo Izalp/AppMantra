@@ -1,11 +1,13 @@
 import React from 'react';
-import { Container, Content, Title } from './styles';
+import { Container, Content, Title, Logo } from './styles';
+import logo from '../../assets/logo.png'; 
 
 const HomePage: React.FC = () => {
   return (
     <Container>
       <Content>
-        <Title>Página Home</Title>
+        <Logo src={logo} alt="Logo" />
+        <Title>Bem-vindo ao Home!</Title>
       </Content>
     </Container>
   );
