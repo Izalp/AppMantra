@@ -49,14 +49,14 @@ O projeto inclui testes para as páginas e componentes principais. Para executar
 ## 👩‍💻 Autores
 Desenvolvedores que contribuíram para a estruturação e desenvolvimento deste projeto:
 
-Iza Lopes Ribeiro
-GitHub: Izalp
+- **Iza Lopes Ribeiro**  
+  [GitHub: Izalp](https://github.com/Izalp)
 
-Thomas Ceccon Guimarães
-GitHub: ThomasCeccon
+- **Thomas Ceccon Guimarães**  
+  [GitHub: ThomasCeccon](https://github.com/ThomasCeccon)
 
-Gabriella Gonçalves Moreira
-GitHub: gabriellagmoreira
+- **Gabriella Gonçalves Moreira**
+[GitHub: gabriellagmoreira](https://github.com/gabriellagmoreira)
 
-Marcos Guerra Soares
-GitHub: Marcos1Guerra
+- **Marcos Guerra Soares**
+[GitHub: Marcos1Guerra](https://github.com/Marcos1Guerra)
