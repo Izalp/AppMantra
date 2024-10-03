@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form';
 import * as Yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useNavigate } from 'react-router-dom';
-import { Container, LoginForm, Logo, InputWrapper, Label, Input, Button, ErrorMessage, IconWrapper } from './styles';
+import { Container, LoginForm, Logo, InputWrapper, Label, Input, Button, ErrorMessage, IconWrapper, ForgotPassword, SignupPrompt, SignupLink } from './styles';
 import { FaEye, FaEyeSlash } from 'react-icons/fa'; 
 import logo from '../../assets/logo.png'; 
 import { auth } from '../../firebase/config';  
@@ -46,17 +46,17 @@ const LoginPage: React.FC = () => {
   return (
     <Container>
       <LoginForm onSubmit={handleSubmit(onSubmit)}>
-        <Logo src={logo} alt="Logo" />
+      <Logo src={logo} alt="Logo" />
         <InputWrapper>
         <Label htmlFor="email">Email</Label> 
           <Input id="email" type="email" {...register('email')} /> 
           {errors.email && <ErrorMessage>{errors.email.message}</ErrorMessage>}
         </InputWrapper>
         <InputWrapper>
-          <Label htmlFor="password">Senha</Label> {/* Adicionando o htmlFor */}
+          <Label htmlFor="password">Senha</Label> 
           <InputWrapper style={{ position: 'relative' }}>
             <Input
-              id="password" // Adicionei o id aqui
+              id="password"
               type={showPassword ? 'text' : 'password'}
               {...register('password')}
             />
@@ -65,8 +65,12 @@ const LoginPage: React.FC = () => {
             </IconWrapper>
           </InputWrapper>
           {errors.password && <ErrorMessage>{errors.password.message}</ErrorMessage>}
+          <ForgotPassword href="/reset-password">Esqueceu a senha?</ForgotPassword>
         </InputWrapper>
         <Button type="submit">Entrar</Button>
+        <SignupPrompt>
+          Ainda não possui uma conta? <SignupLink href="/signup">Cadastre-se</SignupLink>
+        </SignupPrompt>
       </LoginForm>
     </Container>
   );
