@@ -56,7 +56,7 @@ Desenvolvedores que contribuíram para a estruturação e desenvolvimento deste 
   [GitHub: ThomasCeccon](https://github.com/ThomasCeccon)
 
 - **Gabriella Gonçalves Moreira**
-[GitHub: gabriellagmoreira](https://github.com/gabriellagmoreira)
+  [GitHub: gabriellagmoreira](https://github.com/gabriellagmoreira)
 
 - **Marcos Guerra Soares**
-[GitHub: Marcos1Guerra](https://github.com/Marcos1Guerra)
+  [GitHub: Marcos1Guerra](https://github.com/Marcos1Guerra)
