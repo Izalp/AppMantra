@@ -15,10 +15,10 @@ Antes de começar, você precisará ter instalado em sua máquina:
 
 1. **Clone o repositório**:
 
-   ```bash
+```bash
    git clone https://github.com/Izalp/AppMantra.git
    cd meditacao-app
-   ```
+```
 
 2. **Instale as dependências**:
    
