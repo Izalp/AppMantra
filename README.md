@@ -2,7 +2,8 @@
 
 ## ✨ Visão Geral
 
-O **AppMantra** é um aplicativo de meditação construído com React e Firebase, oferecendo uma experiência de usuário intuitiva para iniciantes e praticantes de meditação.O aplicativo possui funcionalidades de autenticação, permitindo que os usuários façam login para acessar conteúdos exclusivos de meditação.
+O **AppMantra** é um aplicativo de meditação construído com React e Firebase, oferecendo uma experiência de usuário intuitiva para iniciantes e praticantes de meditação. 
+O aplicativo possui funcionalidades de autenticação, permitindo que os usuários façam login para acessar conteúdos exclusivos de meditação.
 
 ## 🛠️ Pré-requisitos
 
@@ -55,8 +56,8 @@ Desenvolvedores que contribuíram para a estruturação e desenvolvimento deste 
 - **Thomas Ceccon Guimarães**  
   [GitHub: ThomasCeccon](https://github.com/ThomasCeccon)
 
-- **Gabriella Gonçalves Moreira**
+- **Gabriella Gonçalves Moreira**  
   [GitHub: gabriellagmoreira](https://github.com/gabriellagmoreira)
 
-- **Marcos Guerra Soares**
+- **Marcos Guerra Soares**  
   [GitHub: Marcos1Guerra](https://github.com/Marcos1Guerra)
