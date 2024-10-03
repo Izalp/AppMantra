@@ -21,22 +21,27 @@ Antes de começar, você precisará ter instalado em sua máquina:
    ```
 
 2. **Instale as dependências**:
+   
 ```bash
     npm install
 ```
+
 Isso instalará todas as dependências listadas no package.json. 📥
 
 ## 💻 Execução
 
 Para iniciar o aplicativo localmente, execute:
+
 ```bash
     npm start
 ```
+
 🌐 O aplicativo estará disponível em http://localhost:3000. Você pode abrir esta URL em seu navegador para acessar o AppMantra.
 
 ## 🧪 Execução de Testes
 
 O projeto inclui testes para as páginas e componentes principais. Para executar os testes, utilize:
+
 ```bash
     npm test
 ```
