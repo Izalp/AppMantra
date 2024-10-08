@@ -94,7 +94,9 @@ export const IconWrapper = styled.div`
   &:hover {
     color: #f35482;
   }
+
 `;
+
 
 export const Button = styled.button`
   width: 40%;
