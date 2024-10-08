@@ -15,43 +15,60 @@ interface LoginFormInputs {
 }
 
 const schema = Yup.object().shape({
-  email: Yup.string().email('Email inválido').required('Email é obrigatório'),
-  password: Yup.string().min(6, 'A senha deve conter pelo menos 6 caracteres').required('Senha é obrigatória'),
+  email: Yup.string()
+    .email('Email inválido')
+    .required('Email é obrigatório'),
+  password: Yup.string()
+    .required('Senha é obrigatória')
+    .min(6, 'A senha deve conter pelo menos 6 caracteres'),
 });
 
 const LoginPage: React.FC = () => {
-  const { register, handleSubmit, setError, formState: { errors } } = useForm<LoginFormInputs>({
+  const { register, handleSubmit, formState: { errors } } = useForm<LoginFormInputs>({
     resolver: yupResolver(schema),
   });
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false); 
+  const [authError, setAuthError] = useState<string | null>(null);
 
   const onSubmit = async (data: LoginFormInputs) => {
+    setAuthError(null);
     try {
       await signIn(auth, data.email, data.password);
-      navigate('/home'); 
-    } catch (error: any) { 
-      console.error("Erro no login: ", error);
-      if (error.code === 'auth/user-not-found') {
-        setError('email', { type: 'manual', message: 'Email inválido' });
-      } else if (error.code === 'auth/wrong-password') {
-        setError('password', { type: 'manual', message: 'Senha inválida' });
-      } else {
-        setError('email', { type: 'manual', message: 'Email inválido' });
-        setError('password', { type: 'manual', message: 'Senha inválida' });
-      }
+      navigate('/home');
+    } catch (error: any) {
+      handleLoginError(error);
     }
   };
-
+  
+  const handleLoginError = (error: any) => {
+    switch (error.code) {
+      case "auth/invalid-credential":
+        setAuthError('Email ou senha inválidos. Tente novamente!'); 
+        break;
+      case "auth/network-request-failed":
+        setAuthError('Ocorreu um erro de conexão. Tente novamente mais tarde!'); 
+        break;
+      case "auth/too-many-requests":
+        setAuthError('Muitas tentativas de login. Tente redefinir sua senha ou tente novamente mais tarde.'); 
+        break;
+      default:
+        setAuthError('Ocorreu um erro, tente novamente mais tarde!'); 
+        break;
+    }
+  };
+  
   return (
     <Container>
       <LoginForm onSubmit={handleSubmit(onSubmit)}>
       <Logo src={logo} alt="Logo" />
+
         <InputWrapper>
         <Label htmlFor="email">Email</Label> 
           <Input id="email" type="email" {...register('email')} /> 
           {errors.email && <ErrorMessage>{errors.email.message}</ErrorMessage>}
         </InputWrapper>
+
         <InputWrapper>
           <Label htmlFor="password">Senha</Label> 
           <InputWrapper style={{ position: 'relative' }}>
@@ -60,14 +77,18 @@ const LoginPage: React.FC = () => {
               type={showPassword ? 'text' : 'password'}
               {...register('password')}
             />
-            <IconWrapper onClick={() => setShowPassword(!showPassword)}>
+            <IconWrapper onClick={() => setShowPassword(!showPassword)}
+             data-testid="toggle-password-visibility">
               {showPassword ? <FaEye /> : <FaEyeSlash />}
             </IconWrapper>
           </InputWrapper>
           {errors.password && <ErrorMessage>{errors.password.message}</ErrorMessage>}
+          {authError && <ErrorMessage>{authError}</ErrorMessage>}
           <ForgotPassword href="/reset-password">Esqueceu a senha?</ForgotPassword>
         </InputWrapper>
+
         <Button type="submit">Entrar</Button>
+
         <SignupPrompt>
           Ainda não possui uma conta? <SignupLink href="/signup">Cadastre-se</SignupLink>
         </SignupPrompt>
