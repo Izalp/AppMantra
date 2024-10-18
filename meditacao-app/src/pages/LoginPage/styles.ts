@@ -31,7 +31,7 @@ export const InputWrapper = styled.div`
 `;
 
 export const Label = styled.label`
-  font-size: 14px;
+  font-size: 12px;
   margin-bottom: 8px;
   display: block;
   color: #333;
@@ -51,6 +51,39 @@ export const Input = styled.input`
   }
 `;
 
+export const ForgotPassword = styled.a`
+  display: block;
+  margin-top: 8px;
+  font-size: 12px;
+  color: #333;
+  text-align: left;
+  cursor: pointer;
+  text-decoration: none;
+  font-weight: bold;
+
+  &:hover {
+    text-decoration: underline;
+  }
+`;
+
+export const SignupPrompt = styled.span`
+  font-size: 12px; 
+  color: #333; 
+  text-align: left; 
+  margin-top: 24px; 
+  width: 100%; 
+`;
+export const SignupLink = styled.a`
+  color: #333; 
+  text-decoration: none;
+  font-weight: bold; 
+  text-align: left;
+
+  &:hover {
+    text-decoration: underline; 
+  }
+`;
+
 export const IconWrapper = styled.div`
   position: absolute;
   right: 10px;
@@ -61,9 +94,12 @@ export const IconWrapper = styled.div`
   &:hover {
     color: #f35482;
   }
+
 `;
 
+
 export const Button = styled.button`
+  width: 40%;
   padding: 12px;
   background-color: #f35482;
   color: #fff;
