@@ -87,14 +87,13 @@ export const SignupLink = styled.a`
 export const IconWrapper = styled.div`
   position: absolute;
   right: 10px;
-  top: 12px;
+  top: 7px;
   cursor: pointer;
   color: #333;
   font-size: 20px;
   &:hover {
     color: #f35482;
   }
-
 `;
 
 
