@@ -36,7 +36,7 @@ describe("LoginPage", () => {
     });
     fireEvent.click(screen.getByRole("button", { name: /entrar/i }));
 
-    const dashboardText = await screen.findByText(/Bem-vindo ao Home!/i);
+    const dashboardText = await screen.findByText(/Bem-vindo Usuário!/i);
     expect(dashboardText).toBeInTheDocument();
   });
 
