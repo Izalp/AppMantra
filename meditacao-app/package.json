@@ -4,6 +4,8 @@
   "private": true,
   "description": "Um aplicativo de meditação em React com autenticação via Firebase.",
   "dependencies": {
+    "@fortawesome/free-solid-svg-icons": "^6.6.0",
+    "@fortawesome/react-fontawesome": "^0.2.2",
     "@hookform/resolvers": "^3.9.0",
     "firebase": "^10.14.0",
     "react": "^18.3.1",
