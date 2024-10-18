@@ -25,9 +25,9 @@ const HomePage: React.FC = () => {
          {/* NavBar fixa no topo */}
       <NavBar>
         <Logo src={logo} alt="Logo" />
-        <a href="#">
+        <button onClick={() => console.log("Ação do ícone clicada")} style={{ background: 'none', border: 'none', cursor: 'pointer' }}>
           <IconWrapper uk-icon="icon: cog; ratio:1.5"></IconWrapper>
-        </a>
+        </button>
       </NavBar>
         <Title>Bem-vindo Usuário!</Title>
 
