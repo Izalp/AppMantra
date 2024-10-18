@@ -1,3 +1,5 @@
+[![CIDC - APPMantra](https://github.com/Izalp/AppMantra/actions/workflows/cidc.yml/badge.svg)](https://github.com/Izalp/AppMantra/actions/workflows/cidc.yml)
+
 # AppMantra - Aplicativo de Meditação 🌸
 
 ## ✨ Visão Geral
