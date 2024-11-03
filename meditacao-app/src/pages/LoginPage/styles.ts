@@ -1,15 +1,18 @@
 import styled from 'styled-components';
+import img1 from '../../assets/img1.jpg';
 
 export const Container = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100vh;
-  background-color: #f0f2f5;
+  background-image: url(${img1}); 
+  background-size: cover; 
+  background-position: center; 
 `;
 
 export const LoginForm = styled.form`
-  background: #fff;
+  background: rgba(255, 255, 255, 255); 
   padding: 40px;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -28,6 +31,7 @@ export const Logo = styled.img`
 export const InputWrapper = styled.div`
   width: 100%;
   margin-bottom: 16px;
+  color: #fdfdfd;
 `;
 
 export const Label = styled.label`
@@ -87,7 +91,7 @@ export const SignupLink = styled.a`
 export const IconWrapper = styled.div`
   position: absolute;
   right: 10px;
-  top: 7px;
+  top: 5px;
   cursor: pointer;
   color: #333;
   font-size: 20px;
