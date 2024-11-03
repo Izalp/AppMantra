@@ -90,7 +90,7 @@ const LoginPage: React.FC = () => {
         <Button type="submit">Entrar</Button>
 
         <SignupPrompt>
-          Ainda não possui uma conta? <SignupLink href="/signup">Cadastre-se</SignupLink>
+          Ainda não possui uma conta? <SignupLink href="/cadastro">Cadastre-se</SignupLink>
         </SignupPrompt>
       </LoginForm>
     </Container>
