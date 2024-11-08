@@ -96,6 +96,45 @@ export const SessionButton = styled.div`
     cursor: pointer;
     font-size: 14px;
   }
+      button:hover {
+    background-color: #f98;
+  }
+`;
+
+// Botão de Play/Pause
+export const PlayPauseButtonWrapper = styled.div`
+  display: flex;
+  align-items: center;
+`;
+
+export const PlayButton = styled.button`
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-size: 1rem;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+
+  &:hover {
+    background-color: #45a049;
+  }
+`;
+
+export const PauseButton = styled.button`
+  background-color: #f44336;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-size: 1rem;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+
+  &:hover {
+    background-color: #e53935;
+  }
 `;
 
 // Progresso pessoal
