@@ -105,3 +105,16 @@ export const ErrorMessage = styled.span`
   font-size: 12px;
   margin-top: 4px;
 `;
+
+export const SuccessMessage = styled.div`
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background-color: #d4edda; 
+  color: #155724; 
+  padding: 10px 20px; 
+  border: 1px solid #c3e6cb; 
+  border-radius: 5px; 
+  z-index: 1000; 
+  transition: opacity 0.5s ease; 
+`;
