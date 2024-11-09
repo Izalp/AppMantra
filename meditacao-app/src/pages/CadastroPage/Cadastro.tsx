@@ -172,3 +172,4 @@ const CadastroPage: React.FC = () => {
 };
 
 export default CadastroPage;
+
