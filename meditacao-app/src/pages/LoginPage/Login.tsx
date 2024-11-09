@@ -84,7 +84,7 @@ const LoginPage: React.FC = () => {
           </InputWrapper>
           {errors.password && <ErrorMessage>{errors.password.message}</ErrorMessage>}
           {authError && <ErrorMessage>{authError}</ErrorMessage>}
-          <ForgotPassword href="/reset-password">Esqueceu a senha?</ForgotPassword>
+          <ForgotPassword href="/redefinirsenha">Esqueceu a senha?</ForgotPassword>
         </InputWrapper>
 
         <Button type="submit">Entrar</Button>
