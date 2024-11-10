@@ -47,7 +47,7 @@ export const Title = styled.h1`
   font-size: 2.5rem;
   color: #2c3e50;
   text-align: center;
-  margin-top: 40px;
+  margin-top: 10px;
 `;
 
 export const Motivation = styled.section`
