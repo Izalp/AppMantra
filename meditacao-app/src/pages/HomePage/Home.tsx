@@ -34,7 +34,6 @@ import musica1 from "../../assets/musica1.jpg";
 import musica2 from "../../assets/musica2.jpg";
 import musica3 from "../../assets/musica3.jpg";
 
-
 const HomePage: React.FC = () => {
   const [isPlaying, setIsPlaying] = useState<string | null>(null); // Guardar o nome do arquivo tocando
   const [audio, setAudio] = useState<HTMLAudioElement | null>(null); // Guardar referência do áudio
@@ -132,10 +131,10 @@ const HomePage: React.FC = () => {
               <h3>Meditação Inicial</h3>
               <p>Inicie sua jornada com uma meditação guiada para relaxamento profundo e foco.</p>
               <AudioControlWrapper>
-                {isPlaying === "audio1.mp3" ? (
+                {isPlaying === "audios/audio1.mp3" ? (
                   <PauseButton onClick={pauseAudio}>Pausar</PauseButton>
                 ) : (
-                  <PlayButton onClick={() => playAudio("audio1.mp3")}>Começar agora</PlayButton>
+                  <PlayButton onClick={() => playAudio("audios/audio1.mp3")}>Começar agora</PlayButton>
                 )}
               </AudioControlWrapper>
             </SessionCard>
@@ -145,10 +144,10 @@ const HomePage: React.FC = () => {
               <h3>Meditação Guiada</h3>
               <p>Mergulhe em uma jornada de autoconhecimento e relaxamento com nossa meditação guiada.</p>
               <AudioControlWrapper>
-                {isPlaying === "audio2.mp3" ? (
+                {isPlaying === "audios/audio2.mp3" ? (
                   <PauseButton onClick={pauseAudio}>Pausar</PauseButton>
                 ) : (
-                  <PlayButton onClick={() => playAudio("audio2.mp3")}>Começar agora</PlayButton>
+                  <PlayButton onClick={() => playAudio("audios/audio2.mp3")}>Começar agora</PlayButton>
                 )}
               </AudioControlWrapper>
             </SessionCard>
@@ -158,10 +157,10 @@ const HomePage: React.FC = () => {
               <h3>Meditação Avançada</h3>
               <p>Experimente técnicas de meditação mais profundas para maior clareza mental e paz interior.</p>
               <AudioControlWrapper>
-                {isPlaying === "audio3.mp3" ? (
+                {isPlaying === "audios/audio3.mp3" ? (
                   <PauseButton onClick={pauseAudio}>Pausar</PauseButton>
                 ) : (
-                  <PlayButton onClick={() => playAudio("audio3.mp3")}>Começar agora</PlayButton>
+                  <PlayButton onClick={() => playAudio("audios/audio3.mp3")}>Começar agora</PlayButton>
                 )}
               </AudioControlWrapper>
             </SessionCard>
@@ -174,10 +173,10 @@ const HomePage: React.FC = () => {
               <h3>Música Relaxante 1</h3>
               <p>Desacelere e relaxe com músicas suaves que promovem tranquilidade e paz.</p>
               <AudioControlWrapper>
-                {isPlaying === "audio4.mp3" ? (
+                {isPlaying === "audios/audio4.mp3" ? (
                   <PauseButton onClick={pauseAudio}>Pausar</PauseButton>
                 ) : (
-                  <PlayButton onClick={() => playAudio("audio4.mp3")}>Começar agora</PlayButton>
+                  <PlayButton onClick={() => playAudio("audios/audio4.mp3")}>Começar agora</PlayButton>
                 )}
               </AudioControlWrapper>
             </SessionCard>
@@ -187,10 +186,10 @@ const HomePage: React.FC = () => {
               <h3>Música Relaxante 2</h3>
               <p>Com melodias suaves, essa música cria o ambiente perfeito para relaxar e meditar.</p>
               <AudioControlWrapper>
-                {isPlaying === "audio5.mp3" ? (
+                {isPlaying === "audios/audio5.mp3" ? (
                   <PauseButton onClick={pauseAudio}>Pausar</PauseButton>
                 ) : (
-                  <PlayButton onClick={() => playAudio("audio5.mp3")}>Começar agora</PlayButton>
+                  <PlayButton onClick={() => playAudio("audios/audio5.mp3")}>Começar agora</PlayButton>
                 )}
               </AudioControlWrapper>
             </SessionCard>
@@ -200,10 +199,10 @@ const HomePage: React.FC = () => {
               <h3>Música Relaxante 3</h3>
               <p>Permita-se relaxar e renovar suas energias com essa melodia suave que acalma a mente e o corpo.</p>
               <AudioControlWrapper>
-                {isPlaying === "audio6.mp3" ? (
+                {isPlaying === "audios/audio6.mp3" ? (
                   <PauseButton onClick={pauseAudio}>Pausar</PauseButton>
                 ) : (
-                  <PlayButton onClick={() => playAudio("audio6.mp3")}>Começar agora</PlayButton>
+                  <PlayButton onClick={() => playAudio("audios/audio6.mp3")}>Começar agora</PlayButton>
                 )}
               </AudioControlWrapper>
             </SessionCard>
@@ -226,14 +225,14 @@ const HomePage: React.FC = () => {
             </NavItem>
           </NavLink>
 
-          <NavLink to="/meditacao" className={({ isActive }: { isActive: boolean }) => (isActive ? "active" : "")}>
+          <NavLink to="/meditacoes" className={({ isActive }: { isActive: boolean }) => (isActive ? "active" : "")}>
             <NavItem>
               <NavIcon><GiYinYang /></NavIcon> 
               <span>Meditação</span>
             </NavItem>
           </NavLink>
 
-          <NavLink to="/musica" className={({ isActive }: { isActive: boolean }) => (isActive ? "active" : "")}>
+          <NavLink to="/musicas" className={({ isActive }: { isActive: boolean }) => (isActive ? "active" : "")}>
             <NavItem>
               <NavIcon><FaMusic /></NavIcon>
               <span>Música</span>
