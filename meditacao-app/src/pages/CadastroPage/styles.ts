@@ -1,12 +1,12 @@
 import styled from 'styled-components';
-import img1 from '../../assets/img1.jpg';
+import background from '../../assets/background.jpg';
 
 export const Container = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100vh;
-  background-image: url(${img1}); 
+  background-image: url(${background}); 
   background-size: cover; 
   background-position: center; 
 `;
