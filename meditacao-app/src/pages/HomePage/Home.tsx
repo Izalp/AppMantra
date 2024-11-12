@@ -1,6 +1,8 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { getStorage, ref, getDownloadURL } from "firebase/storage";
-import logo from "../../assets/logo2.png";
+import { NavLink, useNavigate } from "react-router-dom";
+import { SettingsModal } from "../../components/Modal/Modal";
+
 import {
   Container,
   Content,
@@ -12,7 +14,6 @@ import {
   Highlights,
   SessionCard,
   PlayButton,
-  PauseButton,
   ProgressSection,
   ProgressText,
   ProgressInfo,
@@ -24,9 +25,11 @@ import {
   AudioControlWrapper,
   SettingsButton,
 } from "./styles";
-import { FaHome, FaMusic } from "react-icons/fa"; 
+
+import { FaHome, FaMusic } from "react-icons/fa";
 import { GiYinYang } from "react-icons/gi";
-import { NavLink } from "react-router-dom"; 
+
+import logo from "../../assets/logo2.png";
 import meditacao1 from "../../assets/meditacao1.jpg";
 import meditacao2 from "../../assets/meditacao2.jpg";
 import meditacao3 from "../../assets/meditacao3.jpg";
@@ -35,72 +38,59 @@ import musica2 from "../../assets/musica2.jpg";
 import musica3 from "../../assets/musica3.jpg";
 
 const HomePage: React.FC = () => {
-  const [isPlaying, setIsPlaying] = useState<string | null>(null); // Guardar o nome do arquivo tocando
-  const [audio, setAudio] = useState<HTMLAudioElement | null>(null); // Guardar referência do áudio
-  const [audioTimes, setAudioTimes] = useState<{ [key: string]: number }>({}); // Armazenar tempos independentes para cada áudio
-  const [currentSession, setCurrentSession] = useState<string>("");
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const navigate = useNavigate();
+  const storage = getStorage();
 
-  const playAudio = async (audioFile: string) => {
-    // Se já houver um áudio tocando e não for o mesmo, pausa o áudio atual
-    if (audio && audio.src !== audioFile) {
-      audio.pause();
-      setIsPlaying(null);
-      setAudioTimes((prevState) => ({ ...prevState, [audio.src]: audio.currentTime })); // Salva o tempo do áudio anterior
-    }
+  const [imageUrls, setImageUrls] = useState({
+    meditacao1: meditacao1,
+    meditacao2: meditacao2,
+    meditacao3: meditacao3,
+    musica1: musica1,
+    musica2: musica2,
+    musica3: musica3,
+  });
 
-    // Carregar o novo áudio
-    const storage = getStorage();
-    const audioRef = ref(storage, audioFile);
-
-    try {
-      const url = await getDownloadURL(audioRef);
-      console.log("URL do áudio:", url);
-
-      // Pausar o áudio atual, se houver, antes de carregar o novo áudio
-      if (audio) {
-        audio.pause();
+  useEffect(() => {
+    const loadImages = async () => {
+      try {
+        const urls = {
+          meditacao1: await getDownloadURL(
+            ref(storage, "images/meditacao1.jpg")
+          ),
+          meditacao2: await getDownloadURL(
+            ref(storage, "images/meditacao2.jpg")
+          ),
+          meditacao3: await getDownloadURL(
+            ref(storage, "images/meditacao3.jpg")
+          ),
+          musica1: await getDownloadURL(ref(storage, "images/musica1.jpg")),
+          musica2: await getDownloadURL(ref(storage, "images/musica2.jpg")),
+          musica3: await getDownloadURL(ref(storage, "images/musica3.jpg")),
+        };
+        setImageUrls(urls);
+      } catch (error) {
+        console.error(
+          "Erro ao carregar imagens do Firebase. Usando imagens locais.",
+          error
+        );
       }
+    };
 
-      const newAudio = new Audio(url);
+    loadImages();
+  }, [storage]);
 
-      // Se houver um tempo salvo para esse áudio específico, inicie o áudio a partir deste ponto
-      newAudio.currentTime = audioTimes[audioFile] || 0;
+  function handleUpdate(): void {
+    throw new Error("Function not implemented.");
+  }
 
-      newAudio.play().catch((error) => {
-        console.error("Erro ao reproduzir o áudio:", error);
-        alert("Não foi possível reproduzir o áudio.");
-      });
+  function handleDeleteAccount(): void {
+    throw new Error("Function not implemented.");
+  }
 
-      newAudio.onplay = () => {
-        setIsPlaying(audioFile); // Atualiza o estado para o áudio que está tocando
-      };
-
-      newAudio.onpause = () => {
-        setAudioTimes((prevState) => ({
-          ...prevState,
-          [audioFile]: newAudio.currentTime, // Salva o tempo atual quando o áudio é pausado
-        }));
-      };
-
-      setAudio(newAudio); // Armazena a referência do novo áudio
-      setCurrentSession(audioFile);
-
-    } catch (error) {
-      console.error("Erro ao carregar o áudio:", error);
-      alert("Erro ao carregar o áudio.");
-    }
-  };
-
-  const pauseAudio = () => {
-    if (audio) {
-      audio.pause();
-      setIsPlaying(null); // Atualiza o estado para nenhum áudio tocando
-      setAudioTimes((prevState) => ({
-        ...prevState,
-        [audio.src]: audio.currentTime, // Salva o tempo em que o áudio foi pausado
-      }));
-    }
-  };
+  function handleLogout(): void {
+    throw new Error("Function not implemented.");
+  }
 
   return (
     <Container>
@@ -108,7 +98,7 @@ const HomePage: React.FC = () => {
         <Header>
           <Logo src={logo} alt="Logo" />
           <NavBar>
-            <SettingsButton>
+            <SettingsButton onClick={() => setIsModalOpen(true)}>
               <IconWrapper uk-icon="icon: cog; ratio:1.5" />
             </SettingsButton>
           </NavBar>
@@ -118,8 +108,8 @@ const HomePage: React.FC = () => {
         <Motivation>
           <h3>Encontre Paz e Clareza Interior</h3>
           <p>
-            Comece sua prática de meditação com áudios e sessões feitas para trazer equilíbrio
-            e serenidade para sua vida. 
+            Comece sua prática de meditação com áudios e sessões feitas para
+            trazer equilíbrio e serenidade para sua vida.
           </p>
         </Motivation>
 
@@ -127,41 +117,50 @@ const HomePage: React.FC = () => {
           <h2>Destaques do Dia</h2>
           <div className="sessions">
             <SessionCard>
-              <SessionImage src={meditacao1} alt="Meditação Inicial" />
+              <SessionImage
+                src={imageUrls.meditacao1}
+                alt="Meditação Inicial"
+              />
               <h3>Meditação Inicial</h3>
-              <p>Inicie sua jornada com uma meditação guiada para relaxamento profundo e foco.</p>
+              <p>
+                Inicie sua jornada com uma meditação guiada para relaxamento
+                profundo e foco.
+              </p>
               <AudioControlWrapper>
-                {isPlaying === "audios/audio1.mp3" ? (
-                  <PauseButton onClick={pauseAudio}>Pausar</PauseButton>
-                ) : (
-                  <PlayButton onClick={() => playAudio("audios/audio1.mp3")}>Começar agora</PlayButton>
-                )}
+                <PlayButton onClick={() => navigate("/meditacoes")}>
+                  Começar agora
+                </PlayButton>
               </AudioControlWrapper>
             </SessionCard>
 
             <SessionCard>
-              <SessionImage src={meditacao2} alt="Meditação Guiada" />
+              <SessionImage src={imageUrls.meditacao2} alt="Meditação Guiada" />
               <h3>Meditação Guiada</h3>
-              <p>Mergulhe em uma jornada de autoconhecimento e relaxamento com nossa meditação guiada.</p>
+              <p>
+                Mergulhe em uma jornada de autoconhecimento e relaxamento com
+                nossa meditação guiada.
+              </p>
               <AudioControlWrapper>
-                {isPlaying === "audios/audio2.mp3" ? (
-                  <PauseButton onClick={pauseAudio}>Pausar</PauseButton>
-                ) : (
-                  <PlayButton onClick={() => playAudio("audios/audio2.mp3")}>Começar agora</PlayButton>
-                )}
+                <PlayButton onClick={() => navigate("/meditacoes")}>
+                  Começar agora
+                </PlayButton>
               </AudioControlWrapper>
             </SessionCard>
 
             <SessionCard>
-              <SessionImage src={meditacao3} alt="Meditação Avançada" />
+              <SessionImage
+                src={imageUrls.meditacao3}
+                alt="Meditação Avançada"
+              />
               <h3>Meditação Avançada</h3>
-              <p>Experimente técnicas de meditação mais profundas para maior clareza mental e paz interior.</p>
+              <p>
+                Experimente técnicas de meditação mais profundas para maior
+                clareza mental e paz interior.
+              </p>
               <AudioControlWrapper>
-                {isPlaying === "audios/audio3.mp3" ? (
-                  <PauseButton onClick={pauseAudio}>Pausar</PauseButton>
-                ) : (
-                  <PlayButton onClick={() => playAudio("audios/audio3.mp3")}>Começar agora</PlayButton>
-                )}
+                <PlayButton onClick={() => navigate("/meditacoes")}>
+                  Começar agora
+                </PlayButton>
               </AudioControlWrapper>
             </SessionCard>
           </div>
@@ -169,41 +168,44 @@ const HomePage: React.FC = () => {
           <h2>Músicas Relaxantes</h2>
           <div className="music-sessions">
             <SessionCard>
-              <SessionImage src={musica1} alt="Música Relaxante 1" />
+              <SessionImage src={imageUrls.musica1} alt="Música Relaxante 1" />
               <h3>Música Relaxante 1</h3>
-              <p>Desacelere e relaxe com músicas suaves que promovem tranquilidade e paz.</p>
+              <p>
+                Desacelere e relaxe com músicas suaves que promovem
+                tranquilidade e paz.
+              </p>
               <AudioControlWrapper>
-                {isPlaying === "audios/audio4.mp3" ? (
-                  <PauseButton onClick={pauseAudio}>Pausar</PauseButton>
-                ) : (
-                  <PlayButton onClick={() => playAudio("audios/audio4.mp3")}>Começar agora</PlayButton>
-                )}
+                <PlayButton onClick={() => navigate("/musicas")}>
+                  Começar agora
+                </PlayButton>
               </AudioControlWrapper>
             </SessionCard>
 
             <SessionCard>
-              <SessionImage src={musica2} alt="Música Relaxante 2" />
+              <SessionImage src={imageUrls.musica2} alt="Música Relaxante 2" />
               <h3>Música Relaxante 2</h3>
-              <p>Com melodias suaves, essa música cria o ambiente perfeito para relaxar e meditar.</p>
+              <p>
+                Com melodias suaves, essa música cria o ambiente perfeito para
+                relaxar e meditar.
+              </p>
               <AudioControlWrapper>
-                {isPlaying === "audios/audio5.mp3" ? (
-                  <PauseButton onClick={pauseAudio}>Pausar</PauseButton>
-                ) : (
-                  <PlayButton onClick={() => playAudio("audios/audio5.mp3")}>Começar agora</PlayButton>
-                )}
+                <PlayButton onClick={() => navigate("/musicas")}>
+                  Começar agora
+                </PlayButton>
               </AudioControlWrapper>
             </SessionCard>
 
             <SessionCard>
-              <SessionImage src={musica3} alt="Música Relaxante 3" />
+              <SessionImage src={imageUrls.musica3} alt="Música Relaxante 3" />
               <h3>Música Relaxante 3</h3>
-              <p>Permita-se relaxar e renovar suas energias com essa melodia suave que acalma a mente e o corpo.</p>
+              <p>
+                Permita-se relaxar e renovar suas energias com essa melodia
+                suave que acalma a mente e o corpo.
+              </p>
               <AudioControlWrapper>
-                {isPlaying === "audios/audio6.mp3" ? (
-                  <PauseButton onClick={pauseAudio}>Pausar</PauseButton>
-                ) : (
-                  <PlayButton onClick={() => playAudio("audios/audio6.mp3")}>Começar agora</PlayButton>
-                )}
+                <PlayButton onClick={() => navigate("/musicas")}>
+                  Começar agora
+                </PlayButton>
               </AudioControlWrapper>
             </SessionCard>
           </div>
@@ -212,33 +214,67 @@ const HomePage: React.FC = () => {
         <ProgressSection>
           <ProgressText>Seu Progresso</ProgressText>
           <ProgressInfo>
-            <p>Você meditou por <strong>12 minutos</strong> esta semana!</p>
-            <p><strong>5</strong> dias consecutivos de meditação!</p>
+            <p>
+              Você meditou por <strong>12 minutos</strong> esta semana!
+            </p>
+            <p>
+              <strong>5</strong> dias consecutivos de meditação!
+            </p>
           </ProgressInfo>
         </ProgressSection>
 
-        <FooterNavBar>
-          <NavLink to="/home" className={({ isActive }: { isActive: boolean }) => (isActive ? "active" : "")}>
+        <FooterNavBar modalOpen={isModalOpen}>
+          <NavLink
+            to="/home"
+            className={({ isActive }: { isActive: boolean }) =>
+              isActive ? "active" : ""
+            }
+          >
             <NavItem>
-              <NavIcon><FaHome /></NavIcon>
+              <NavIcon>
+                <FaHome />
+              </NavIcon>
               <span>Home</span>
             </NavItem>
           </NavLink>
 
-          <NavLink to="/meditacoes" className={({ isActive }: { isActive: boolean }) => (isActive ? "active" : "")}>
+          <NavLink
+            to="/meditacoes"
+            className={({ isActive }: { isActive: boolean }) =>
+              isActive ? "active" : ""
+            }
+          >
             <NavItem>
-              <NavIcon><GiYinYang /></NavIcon> 
+              <NavIcon>
+                <GiYinYang />
+              </NavIcon>
               <span>Meditação</span>
             </NavItem>
           </NavLink>
 
-          <NavLink to="/musicas" className={({ isActive }: { isActive: boolean }) => (isActive ? "active" : "")}>
+          <NavLink
+            to="/musicas"
+            className={({ isActive }: { isActive: boolean }) =>
+              isActive ? "active" : ""
+            }
+          >
             <NavItem>
-              <NavIcon><FaMusic /></NavIcon>
+              <NavIcon>
+                <FaMusic />
+              </NavIcon>
               <span>Música</span>
             </NavItem>
           </NavLink>
         </FooterNavBar>
+
+        {isModalOpen && (
+          <SettingsModal
+            closeModal={() => setIsModalOpen(false)}
+            onUpdate={handleUpdate}
+            onDeleteAccount={handleDeleteAccount}
+            onLogout={handleLogout}
+          />
+        )}
       </Content>
     </Container>
   );
