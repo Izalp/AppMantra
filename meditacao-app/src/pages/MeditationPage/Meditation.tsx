@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { getStorage, ref, getDownloadURL } from "firebase/storage";
+import audioList from "../../components/AudiosMeditacao/Meditacoes";
+import { SettingsModal } from "../../components/Modal/Modal";
+
 import {
   PageContainer,
   Header,
@@ -22,13 +25,15 @@ import {
   Motivation,
   TimeDisplayContainer,
 } from "./styles";
+
 import logo from "../../assets/logo2.png";
+
 import { FaPlay, FaPause, FaForward, FaHome, FaMusic } from "react-icons/fa";
 import { GiYinYang } from "react-icons/gi";
 import { NavLink } from "react-router-dom";
-import audioList from "../../components/AudiosMeditacao/Meditacoes";
 
 const MeditationPage: React.FC = () => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [isPlaying, setIsPlaying] = useState<string | null>(null);
   const [audio, setAudio] = useState<HTMLAudioElement | null>(null);
   const [audioTimes, setAudioTimes] = useState<{ [key: string]: number }>({});
@@ -59,6 +64,18 @@ const MeditationPage: React.FC = () => {
 
     loadImages();
   }, []);
+
+  function handleUpdate(): void {
+    throw new Error("Function not implemented.");
+  }
+
+  function handleDeleteAccount(): void {
+    throw new Error("Function not implemented.");
+  }
+
+  function handleLogout(): void {
+    throw new Error("Function not implemented.");
+  }
 
   const playAudio = async (audioFilePath: string) => {
     if (audio && audio.src !== audioFilePath) {
@@ -91,8 +108,8 @@ const MeditationPage: React.FC = () => {
 
       newAudio.oncanplaythrough = () => {
         setIsPlaying(audioFilePath);
-        setDuration(newAudio.duration); 
-        console.log("Duração do áudio:", newAudio.duration); 
+        setDuration(newAudio.duration);
+        console.log("Duração do áudio:", newAudio.duration);
       };
 
       newAudio.ontimeupdate = () => {
@@ -107,7 +124,7 @@ const MeditationPage: React.FC = () => {
       };
 
       newAudio.onended = () => {
-        setIsPlaying(null);  // Permite que o áudio seja reiniciado ao clicar novamente
+        setIsPlaying(null); // Permite que o áudio seja reiniciado ao clicar novamente
       };
 
       setAudio(newAudio);
@@ -135,7 +152,7 @@ const MeditationPage: React.FC = () => {
   };
 
   const formatTime = (time: number) => {
-    if (isNaN(time)) return "00:00"; 
+    if (isNaN(time)) return "00:00";
     const minutes = Math.floor(time / 60);
     const seconds = Math.floor(time % 60);
     return `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
@@ -146,7 +163,7 @@ const MeditationPage: React.FC = () => {
       <Header>
         <Logo src={logo} alt="Logo" />
         <NavBar>
-          <SettingsButton>
+          <SettingsButton onClick={() => setIsModalOpen(true)}>
             <IconWrapper uk-icon="icon: cog; ratio:1.5" />
           </SettingsButton>
         </NavBar>
@@ -182,37 +199,41 @@ const MeditationPage: React.FC = () => {
               <h3>{audioItem.title}</h3>
               <p>{audioItem.description}</p>
             </AudioInfo>
-              {isPlaying === audioItem.audioFilePath ? (
-                <div style={{ display: 'flex', justifyContent: 'center' }}>
-                  <ControlButton onClick={pauseAudio} className="pause">
-                    <FaPause size={24} />
-                  </ControlButton>
-                  <ControlButton onClick={skipAudio} className="skip" style={{ marginLeft: '10px' }}>
-                    <FaForward size={24} />
-                  </ControlButton>
-                </div>
-              ) : (
-                <ControlButton
-                  onClick={() => playAudio(audioItem.audioFilePath)}
-                  className="play"
-                >
-                  <FaPlay size={24} />
+            {isPlaying === audioItem.audioFilePath ? (
+              <div style={{ display: "flex", justifyContent: "center" }}>
+                <ControlButton onClick={pauseAudio} className="pause">
+                  <FaPause size={24} />
                 </ControlButton>
-              )}
+                <ControlButton
+                  onClick={skipAudio}
+                  className="skip"
+                  style={{ marginLeft: "10px" }}
+                >
+                  <FaForward size={24} />
+                </ControlButton>
+              </div>
+            ) : (
+              <ControlButton
+                onClick={() => playAudio(audioItem.audioFilePath)}
+                className="play"
+              >
+                <FaPlay size={24} />
+              </ControlButton>
+            )}
 
             <ProgressBarContainer>
-              <ProgressBar width={(currentTime / duration) * 100 } />
+              <ProgressBar width={(currentTime / duration) * 100} />
             </ProgressBarContainer>
 
             <TimeDisplayContainer>
-                  <TimeDisplay>{formatTime(currentTime)}</TimeDisplay>
-                  <TimeDisplay>{formatTime(duration)}</TimeDisplay> 
+              <TimeDisplay>{formatTime(currentTime)}</TimeDisplay>
+              <TimeDisplay>{formatTime(duration)}</TimeDisplay>
             </TimeDisplayContainer>
           </AudioCard>
         ))}
       </AudioGrid>
 
-      <FooterNavBar>
+      <FooterNavBar modalOpen={isModalOpen}>
         <NavLink
           to="/home"
           className={({ isActive }) => (isActive ? "active" : "")}
@@ -249,6 +270,14 @@ const MeditationPage: React.FC = () => {
           </NavItem>
         </NavLink>
       </FooterNavBar>
+      {isModalOpen && (
+        <SettingsModal
+          closeModal={() => setIsModalOpen(false)}
+          onUpdate={handleUpdate}
+          onDeleteAccount={handleDeleteAccount}
+          onLogout={handleLogout}
+        />
+      )}
     </PageContainer>
   );
 };

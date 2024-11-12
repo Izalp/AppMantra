@@ -1,5 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { getStorage, ref, getDownloadURL } from "firebase/storage";
+import { NavLink } from "react-router-dom";
+import musicaList from "../../components/AudiosMusica/Musicas";
+import { SettingsModal } from "../../components/Modal/Modal";
+
 import {
   PageContainer,
   Header,
@@ -23,13 +27,12 @@ import {
   TimeDisplayContainer,
 } from "./styles";
 import logo from "../../assets/logo2.png";
+
 import { FaPlay, FaPause, FaForward, FaHome, FaMusic } from "react-icons/fa";
 import { GiYinYang } from "react-icons/gi";
-import { NavLink } from "react-router-dom";
-import musicaList from "../../components/AudiosMusica/Musicas";
-
 
 const MusicPage: React.FC = () => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [isPlaying, setIsPlaying] = useState<string | null>(null);
   const [audio, setAudio] = useState<HTMLAudioElement | null>(null);
   const [audioTimes, setAudioTimes] = useState<{ [key: string]: number }>({});
@@ -60,6 +63,18 @@ const MusicPage: React.FC = () => {
 
     loadImages();
   }, []);
+
+  function handleUpdate(): void {
+    throw new Error("Function not implemented.");
+  }
+
+  function handleDeleteAccount(): void {
+    throw new Error("Function not implemented.");
+  }
+
+  function handleLogout(): void {
+    throw new Error("Function not implemented.");
+  }
 
   const playAudio = async (audioFilePath: string) => {
     if (audio && audio.src !== audioFilePath) {
@@ -147,7 +162,7 @@ const MusicPage: React.FC = () => {
       <Header>
         <Logo src={logo} alt="Logo" />
         <NavBar>
-          <SettingsButton>
+          <SettingsButton onClick={() => setIsModalOpen(true)}>
             <IconWrapper uk-icon="icon: cog; ratio:1.5" />
           </SettingsButton>
         </NavBar>
@@ -213,7 +228,7 @@ const MusicPage: React.FC = () => {
         ))}
       </AudioGrid>
 
-      <FooterNavBar>
+      <FooterNavBar modalOpen={isModalOpen}>
         <NavLink
           to="/home"
           className={({ isActive }) => (isActive ? "active" : "")}
@@ -250,6 +265,15 @@ const MusicPage: React.FC = () => {
           </NavItem>
         </NavLink>
       </FooterNavBar>
+
+      {isModalOpen && (
+        <SettingsModal
+          closeModal={() => setIsModalOpen(false)}
+          onUpdate={handleUpdate}
+          onDeleteAccount={handleDeleteAccount}
+          onLogout={handleLogout}
+        />
+      )}
     </PageContainer>
   );
 };

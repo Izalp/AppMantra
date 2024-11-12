@@ -217,7 +217,7 @@ export const TimeDisplayContainer = styled.div`
   width: 100%;
 `;
 
-export const FooterNavBar = styled.footer`
+export const FooterNavBar = styled.footer<{ modalOpen: boolean }>`
   display: flex;
   justify-content: space-around;
   align-items: center;
@@ -228,7 +228,13 @@ export const FooterNavBar = styled.footer`
   bottom: 0;
   width: 100%;
   z-index: 10;
-  margin-top: auto;
+  transition: background-color 0.3s ease, opacity 0.3s ease;
+
+  ${(props) =>
+    props.modalOpen &&
+    `
+      background-color: rgba(255, 255, 255, 0.8);
+  `}
 `;
 
 export const NavItem = styled.div`
