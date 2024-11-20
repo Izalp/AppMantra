@@ -30,16 +30,29 @@ import logo from "../../assets/logo2.png";
 
 import { FaPlay, FaPause, FaForward, FaHome, FaMusic } from "react-icons/fa";
 import { GiYinYang } from "react-icons/gi";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
+import { deleteUser, getAuth, signOut, updateEmail, updatePassword } from "firebase/auth";
 
 const MeditationPage: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isPlaying, setIsPlaying] = useState<string | null>(null);
-  const [audio, setAudio] = useState<HTMLAudioElement | null>(null);
-  const [audioTimes, setAudioTimes] = useState<{ [key: string]: number }>({});
+  const [audioStates, setAudioStates] = useState<{
+    [key: string]: {
+      isPlaying: boolean;
+      audio: HTMLAudioElement | null;
+      currentTime: number;
+      duration: number;
+    };
+  }>({});
   const [imageUrls, setImageUrls] = useState<{ [key: string]: string }>({});
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState<number>(0);
+  const [userConfirmed, setUserConfirmed] = useState<boolean>(false);
+  const [newEmail, setNewEmail] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const navigate = useNavigate();
+  const storage = getStorage();
+  const auth = getAuth();
+
 
   useEffect(() => {
     const storage = getStorage();
@@ -65,89 +78,108 @@ const MeditationPage: React.FC = () => {
     loadImages();
   }, []);
 
-  function handleUpdate(): void {
-    throw new Error("Function not implemented.");
-  }
-
-  function handleDeleteAccount(): void {
-    throw new Error("Function not implemented.");
-  }
-
-  function handleLogout(): void {
-    throw new Error("Function not implemented.");
-  }
-
   const playAudio = async (audioFilePath: string) => {
-    if (audio && audio.src !== audioFilePath) {
-      audio.pause();
-      setIsPlaying(null);
-      setAudioTimes((prevState) => ({
+    // Se o áudio já está sendo tocado, pausa o áudio atual e zera o tempo do anterior
+    const currentAudioState = audioStates[audioFilePath];
+
+    // Se houver um áudio em execução, pausa ele e zera o tempo
+    if (currentAudioState && currentAudioState.isPlaying) {
+      currentAudioState.audio?.pause();
+      setAudioStates((prevState) => ({
         ...prevState,
-        [audio.src]: audio.currentTime,
+        [audioFilePath]: {
+          ...currentAudioState,
+          isPlaying: false,
+          currentTime: 0, // Zera o tempo do áudio que já está tocando
+        },
       }));
-    }
-
-    const storage = getStorage();
-    const audioRef = ref(storage, audioFilePath);
-
-    try {
-      const url = await getDownloadURL(audioRef);
-      console.log("URL do áudio:", url);
-
-      if (audio) {
-        audio.pause();
+    } else {
+      // Pause outros áudios em execução
+      for (const key in audioStates) {
+        if (audioStates[key].isPlaying && key !== audioFilePath) {
+          audioStates[key].audio?.pause();
+          setAudioStates((prevState) => ({
+            ...prevState,
+            [key]: { ...audioStates[key], isPlaying: false, currentTime: 0 }, // Zera o tempo do áudio pausado
+          }));
+        }
       }
 
-      const newAudio = new Audio(url);
-      newAudio.currentTime = audioTimes[audioFilePath] || 0;
+      const storage = getStorage();
+      const audioRef = ref(storage, audioFilePath);
 
-      newAudio.play().catch((error) => {
-        console.error("Erro ao reproduzir o áudio:", error);
-        alert("Não foi possível reproduzir o áudio.");
-      });
+      try {
+        const url = await getDownloadURL(audioRef);
+        const newAudio = new Audio(url);
 
-      newAudio.oncanplaythrough = () => {
-        setIsPlaying(audioFilePath);
-        setDuration(newAudio.duration);
-        console.log("Duração do áudio:", newAudio.duration);
-      };
+        // Se o áudio atual foi pausado, mantenha o tempo que ele parou
+        newAudio.currentTime = currentAudioState
+          ? currentAudioState.currentTime
+          : 0;
 
-      newAudio.ontimeupdate = () => {
-        setCurrentTime(newAudio.currentTime); // Atualiza o tempo atual
-      };
+        newAudio.play().catch((error) => {
+          console.error("Erro ao reproduzir o áudio:", error);
+          alert("Não foi possível reproduzir o áudio.");
+        });
 
-      newAudio.onpause = () => {
-        setAudioTimes((prevState) => ({
-          ...prevState,
-          [audioFilePath]: newAudio.currentTime,
-        }));
-      };
+        newAudio.oncanplaythrough = () => {
+          setAudioStates((prevState) => ({
+            ...prevState,
+            [audioFilePath]: {
+              isPlaying: true,
+              audio: newAudio,
+              currentTime: 0, // Começa do 0 para o novo áudio
+              duration: newAudio.duration,
+            },
+          }));
+        };
 
-      newAudio.onended = () => {
-        setIsPlaying(null); // Permite que o áudio seja reiniciado ao clicar novamente
-      };
+        newAudio.ontimeupdate = () => {
+          setAudioStates((prevState) => ({
+            ...prevState,
+            [audioFilePath]: {
+              ...prevState[audioFilePath],
+              currentTime: newAudio.currentTime, // Atualiza o tempo
+            },
+          }));
+        };
 
-      setAudio(newAudio);
-    } catch (error) {
-      console.error("Erro ao carregar o áudio:", error);
-      alert("Erro ao carregar o áudio.");
+        newAudio.onended = () => {
+          setAudioStates((prevState) => ({
+            ...prevState,
+            [audioFilePath]: {
+              ...prevState[audioFilePath],
+              isPlaying: false, // Marca como pausado quando o áudio terminar
+              currentTime: 0, // Zera o tempo do áudio ao final
+            },
+          }));
+        };
+      } catch (error) {
+        console.error("Erro ao carregar o áudio:", error);
+        alert("Erro ao carregar o áudio.");
+      }
     }
   };
 
-  const pauseAudio = () => {
-    if (audio) {
-      audio.pause();
-      setIsPlaying(null);
-      setAudioTimes((prevState) => ({
+  const pauseAudio = (audioFilePath: string) => {
+    const currentAudioState = audioStates[audioFilePath];
+    if (currentAudioState) {
+      currentAudioState.audio?.pause();
+      setAudioStates((prevState) => ({
         ...prevState,
-        [audio.src]: audio.currentTime,
+        [audioFilePath]: { ...currentAudioState, isPlaying: false },
       }));
     }
   };
 
-  const skipAudio = () => {
-    if (audio && audio.currentTime + 10 < audio.duration) {
-      audio.currentTime += 10;
+  const skipAudio = (audioFilePath: string) => {
+    const audioState = audioStates[audioFilePath];
+    if (
+      audioState &&
+      audioState.audio &&
+      audioState.audio.currentTime + 10 < audioState.audio.duration
+    ) {
+      audioState.audio.currentTime += 10;
     }
   };
 
@@ -157,6 +189,67 @@ const MeditationPage: React.FC = () => {
     const seconds = Math.floor(time % 60);
     return `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
   };
+
+  function handleUpdate(email: string, password: string, isConfirmed: boolean): void {
+    setUserConfirmed(isConfirmed);
+  
+    if (isConfirmed && auth.currentUser) {
+      const promises = [];
+  
+      if (email) {
+        promises.push(
+          updateEmail(auth.currentUser, email).catch((error) =>
+            console.error("Erro ao atualizar e-mail:", error)
+          )
+        );
+      }
+  
+      if (password) {
+        promises.push(
+          updatePassword(auth.currentUser, password).catch((error) =>
+            console.error("Erro ao atualizar senha:", error)
+          )
+        );
+      }
+  
+      Promise.all(promises)
+        .then(() => {
+          console.log("E-mail e/ou senha atualizados com sucesso.");
+          setIsModalOpen(false);
+        })
+        .catch((error) => {
+          console.error("Erro ao atualizar credenciais:", error);
+        });
+    } else {
+      console.error("Usuário não autenticado.");
+    }
+  }
+  
+  function handleDeleteAccount(isConfirmed: boolean): void {
+    setUserConfirmed(isConfirmed);
+    if (isConfirmed && auth.currentUser) {
+      deleteUser(auth.currentUser)
+        .then(() => {
+          console.log("Conta excluída com sucesso.");
+          navigate("/"); 
+        })
+        .catch((error) => {
+          console.error("Erro ao excluir conta:", error);
+        });
+    } else {
+      console.log("Exclusão de conta cancelada.");
+    }
+  }
+
+  function handleLogout(): void {
+    signOut(auth)
+      .then(() => {
+        navigate("/");
+      })
+      .catch((error) => {
+        console.error("Erro ao fazer logout:", error);
+      });
+  }
 
   return (
     <PageContainer>
@@ -192,45 +285,61 @@ const MeditationPage: React.FC = () => {
       </Motivation>
 
       <AudioGrid>
-        {audioList.map((audioItem) => (
-          <AudioCard key={audioItem.id}>
-            <AudioImage src={imageUrls[audioItem.id]} alt={audioItem.title} />
-            <AudioInfo>
-              <h3>{audioItem.title}</h3>
-              <p>{audioItem.description}</p>
-            </AudioInfo>
-            {isPlaying === audioItem.audioFilePath ? (
-              <div style={{ display: "flex", justifyContent: "center" }}>
-                <ControlButton onClick={pauseAudio} className="pause">
-                  <FaPause size={24} />
-                </ControlButton>
+        {audioList.map((audioItem) => {
+          const currentAudioState = audioStates[audioItem.audioFilePath];
+          return (
+            <AudioCard key={audioItem.id}>
+              <AudioImage src={imageUrls[audioItem.id]} alt={audioItem.title} />
+              <AudioInfo>
+                <h3>{audioItem.title}</h3>
+                <p>{audioItem.description}</p>
+              </AudioInfo>
+              {currentAudioState?.isPlaying ? (
+                <div style={{ display: "flex", justifyContent: "center" }}>
+                  <ControlButton
+                    onClick={() => pauseAudio(audioItem.audioFilePath)}
+                    className="pause"
+                  >
+                    <FaPause size={24} />
+                  </ControlButton>
+                  <ControlButton
+                    onClick={() => skipAudio(audioItem.audioFilePath)}
+                    className="skip"
+                    style={{ marginLeft: "10px" }}
+                  >
+                    <FaForward size={24} />
+                  </ControlButton>
+                </div>
+              ) : (
                 <ControlButton
-                  onClick={skipAudio}
-                  className="skip"
-                  style={{ marginLeft: "10px" }}
+                  onClick={() => playAudio(audioItem.audioFilePath)}
+                  className="play"
                 >
-                  <FaForward size={24} />
+                  <FaPlay size={24} />
                 </ControlButton>
-              </div>
-            ) : (
-              <ControlButton
-                onClick={() => playAudio(audioItem.audioFilePath)}
-                className="play"
-              >
-                <FaPlay size={24} />
-              </ControlButton>
-            )}
+              )}
 
-            <ProgressBarContainer>
-              <ProgressBar width={(currentTime / duration) * 100} />
-            </ProgressBarContainer>
+              <ProgressBarContainer>
+                <ProgressBar
+                  width={
+                    ((currentAudioState?.currentTime || 0) /
+                      (currentAudioState?.duration || 1)) *
+                    100
+                  }
+                />
+              </ProgressBarContainer>
 
-            <TimeDisplayContainer>
-              <TimeDisplay>{formatTime(currentTime)}</TimeDisplay>
-              <TimeDisplay>{formatTime(duration)}</TimeDisplay>
-            </TimeDisplayContainer>
-          </AudioCard>
-        ))}
+              <TimeDisplayContainer>
+                <TimeDisplay>
+                  {formatTime(currentAudioState?.currentTime || 0)}
+                </TimeDisplay>
+                <TimeDisplay>
+                  {formatTime(currentAudioState?.duration || 0)}
+                </TimeDisplay>
+              </TimeDisplayContainer>
+            </AudioCard>
+          );
+        })}
       </AudioGrid>
 
       <FooterNavBar modalOpen={isModalOpen}>
@@ -270,6 +379,7 @@ const MeditationPage: React.FC = () => {
           </NavItem>
         </NavLink>
       </FooterNavBar>
+
       {isModalOpen && (
         <SettingsModal
           closeModal={() => setIsModalOpen(false)}
