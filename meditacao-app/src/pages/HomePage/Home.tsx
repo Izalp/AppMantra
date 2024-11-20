@@ -205,8 +205,7 @@ const HomePage: React.FC = () => {
               />
               <h3>Meditação Inicial</h3>
               <p>
-                Inicie sua jornada com uma meditação guiada para relaxamento
-                profundo e foco.
+                Inicie sua jornada da meditação.
               </p>
               <AudioControlWrapper>
                 <PlayButton onClick={() => navigate("/meditacoes")}>
@@ -219,8 +218,7 @@ const HomePage: React.FC = () => {
               <SessionImage src={imageUrls.meditacao2} alt="Meditação Guiada" />
               <h3>Meditação Guiada</h3>
               <p>
-                Mergulhe em uma jornada de autoconhecimento e relaxamento com
-                nossa meditação guiada.
+                Relaxe com nossa meditação guiada.
               </p>
               <AudioControlWrapper>
                 <PlayButton onClick={() => navigate("/meditacoes")}>
@@ -236,8 +234,7 @@ const HomePage: React.FC = () => {
               />
               <h3>Meditação Avançada</h3>
               <p>
-                Experimente técnicas de meditação mais profundas para maior
-                clareza mental e paz interior.
+                Experimente técnicas avançadas.
               </p>
               <AudioControlWrapper>
                 <PlayButton onClick={() => navigate("/meditacoes")}>
@@ -251,10 +248,9 @@ const HomePage: React.FC = () => {
           <div className="music-sessions">
             <SessionCard>
               <SessionImage src={imageUrls.musica1} alt="Música Relaxante 1" />
-              <h3>Música Relaxante 1</h3>
+              <h3>Chuva Suave</h3>
               <p>
-                Desacelere e relaxe com músicas suaves que promovem
-                tranquilidade e paz.
+                Relaxe com os sons suaves de uma chuva tranquila.
               </p>
               <AudioControlWrapper>
                 <PlayButton onClick={() => navigate("/musicas")}>
@@ -265,10 +261,9 @@ const HomePage: React.FC = () => {
 
             <SessionCard>
               <SessionImage src={imageUrls.musica2} alt="Música Relaxante 2" />
-              <h3>Música Relaxante 2</h3>
+              <h3>Brisa Tranquila</h3>
               <p>
-                Com melodias suaves, essa música cria o ambiente perfeito para
-                relaxar e meditar.
+                Deixe-se levar pela calma desta melodia suave.
               </p>
               <AudioControlWrapper>
                 <PlayButton onClick={() => navigate("/musicas")}>
@@ -279,10 +274,9 @@ const HomePage: React.FC = () => {
 
             <SessionCard>
               <SessionImage src={imageUrls.musica3} alt="Música Relaxante 3" />
-              <h3>Música Relaxante 3</h3>
+              <h3>Serenidade</h3>
               <p>
-                Permita-se relaxar e renovar suas energias com essa melodia
-                suave que acalma a mente e o corpo.
+                Aproveite o momento com sons relaxantes.
               </p>
               <AudioControlWrapper>
                 <PlayButton onClick={() => navigate("/musicas")}>
