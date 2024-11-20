@@ -147,22 +147,6 @@ export const PlayButton = styled.button`
   }
 `;
 
-export const PauseButton = styled.button`
-  background-color: #e74c3c;
-  color: white;
-  border: none;
-  padding: 15px 30px;
-  border-radius: 50px;
-  font-size: 1.2rem;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-  width: 100%;
-
-  &:hover {
-    background-color: #c0392b;
-  }
-`;
-
 export const ProgressSection = styled.section`
   margin-top: 60px;
   text-align: center;
@@ -179,7 +163,7 @@ export const ProgressInfo = styled.div`
   margin-top: 10px;
 `;
 
-export const FooterNavBar = styled.footer`
+export const FooterNavBar = styled.footer<{ modalOpen: boolean }>`
   display: flex;
   justify-content: space-around;
   align-items: center;
@@ -190,7 +174,15 @@ export const FooterNavBar = styled.footer`
   bottom: 0;
   width: 100%;
   z-index: 10;
+  transition: background-color 0.3s ease, opacity 0.3s ease;
+
+  ${(props) =>
+    props.modalOpen &&
+    `
+      background-color: rgba(255, 255, 255, 0.8);
+  `}
 `;
+
 
 export const NavItem = styled.div`
   text-align: center;
