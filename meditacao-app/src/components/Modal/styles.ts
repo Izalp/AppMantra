@@ -57,7 +57,7 @@ export const MenuItem = styled.button`
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #f35482;  // Cor personalizada
+  background: #f35482;  
   color: white;
   padding: 12px 20px;
   font-size: 18px;
@@ -95,4 +95,55 @@ export const CloseButton = styled.button`
   &:hover {
     color: #e74c3c;
   }
+`;
+
+export const ActionButtonWrapper = styled.div`
+  display: flex;
+  justify-content: space-around;
+  margin-top: 20px;
+`;
+
+export const ActionButton = styled.button`
+  background-color: #f35482;
+  color: white;
+  font-size: 1.2rem;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+
+  &:hover {
+    background-color: #d0436e;
+  }
+
+  &:focus {
+    outline: none;
+    box-shadow: 0 0 5px #f35482;
+  }
+`;
+
+export const InputField = styled.input`
+  width: 100%;
+  padding: 10px;
+  margin: 5px 0;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+   color: #333;
+  &:focus {
+    outline: none;
+    border-color: #f35482;
+    box-shadow: 0 0 4px #efb8c8;
+  }
+`;
+
+export const FormWrapper = styled.div`
+  margin-bottom: 15px;
+`;
+
+export const Label = styled.label`
+  display: block;
+  font-size: 14px;
+  text-align: left;
+  margin-bottom: 5px;
 `;
