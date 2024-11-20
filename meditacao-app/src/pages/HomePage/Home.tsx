@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { getStorage, ref, getDownloadURL } from "firebase/storage";
 import { NavLink, useNavigate } from "react-router-dom";
 import { SettingsModal } from "../../components/Modal/Modal";
-
+import { getAuth, signOut, deleteUser, updateEmail, updatePassword } from "firebase/auth";
 import {
   Container,
   Content,
@@ -39,8 +39,12 @@ import musica3 from "../../assets/musica3.jpg";
 
 const HomePage: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [userConfirmed, setUserConfirmed] = useState<boolean>(false);
+  const [newEmail, setNewEmail] = useState("");
+  const [newPassword, setNewPassword] = useState("");
   const navigate = useNavigate();
   const storage = getStorage();
+  const auth = getAuth();
 
   const [imageUrls, setImageUrls] = useState({
     meditacao1: meditacao1,
@@ -49,6 +53,11 @@ const HomePage: React.FC = () => {
     musica1: musica1,
     musica2: musica2,
     musica3: musica3,
+  });
+
+  const [userProgress, setUserProgress] = useState({
+    minutes: 0,
+    consecutiveDays: 0,
   });
 
   useEffect(() => {
@@ -78,19 +87,92 @@ const HomePage: React.FC = () => {
     };
 
     loadImages();
+
+    const storedMinutes = parseInt(localStorage.getItem("minutes") || "0", 10);
+    const storedConsecutiveDays = parseInt(
+      localStorage.getItem("consecutiveDays") || "0",
+      10
+    );
+
+    setUserProgress({
+      minutes: storedMinutes,
+      consecutiveDays: storedConsecutiveDays,
+    });
   }, [storage]);
 
-  function handleUpdate(): void {
-    throw new Error("Function not implemented.");
+  function handleUpdate(email: string, password: string, isConfirmed: boolean): void {
+    setUserConfirmed(isConfirmed);
+  
+    if (isConfirmed && auth.currentUser) {
+      const promises = [];
+  
+      if (email) {
+        promises.push(
+          updateEmail(auth.currentUser, email).catch((error) =>
+            console.error("Erro ao atualizar e-mail:", error)
+          )
+        );
+      }
+  
+      if (password) {
+        promises.push(
+          updatePassword(auth.currentUser, password).catch((error) =>
+            console.error("Erro ao atualizar senha:", error)
+          )
+        );
+      }
+  
+      Promise.all(promises)
+        .then(() => {
+          console.log("E-mail e/ou senha atualizados com sucesso.");
+          setIsModalOpen(false);
+        })
+        .catch((error) => {
+          console.error("Erro ao atualizar credenciais:", error);
+        });
+    } else {
+      console.error("Usuário não autenticado.");
+    }
   }
-
-  function handleDeleteAccount(): void {
-    throw new Error("Function not implemented.");
+  
+  function handleDeleteAccount(isConfirmed: boolean): void {
+    setUserConfirmed(isConfirmed);
+    if (isConfirmed && auth.currentUser) {
+      deleteUser(auth.currentUser)
+        .then(() => {
+          console.log("Conta excluída com sucesso.");
+          navigate("/"); 
+        })
+        .catch((error) => {
+          console.error("Erro ao excluir conta:", error);
+        });
+    } else {
+      console.log("Exclusão de conta cancelada.");
+    }
   }
 
   function handleLogout(): void {
-    throw new Error("Function not implemented.");
+    signOut(auth)
+      .then(() => {
+        navigate("/");
+      })
+      .catch((error) => {
+        console.error("Erro ao fazer logout:", error);
+      });
   }
+
+  const handleMeditationCompletion = (minutesSpent: number) => {
+    const updatedMinutes = userProgress.minutes + minutesSpent;
+    const updatedDays = userProgress.consecutiveDays + 1; 
+
+    setUserProgress({
+      minutes: updatedMinutes,
+      consecutiveDays: updatedDays,
+    });
+
+    localStorage.setItem("minutes", updatedMinutes.toString());
+    localStorage.setItem("consecutiveDays", updatedDays.toString());
+  };
 
   return (
     <Container>
@@ -215,10 +297,10 @@ const HomePage: React.FC = () => {
           <ProgressText>Seu Progresso</ProgressText>
           <ProgressInfo>
             <p>
-              Você meditou por <strong>12 minutos</strong> esta semana!
+              Você meditou por <strong>{userProgress.minutes} minutos</strong> esta semana!
             </p>
             <p>
-              <strong>5</strong> dias consecutivos de meditação!
+              <strong>{userProgress.consecutiveDays}</strong> dias consecutivos de meditação!
             </p>
           </ProgressInfo>
         </ProgressSection>
@@ -281,3 +363,6 @@ const HomePage: React.FC = () => {
 };
 
 export default HomePage;
+
+
+
