@@ -39,9 +39,7 @@ import musica3 from "../../assets/musica3.jpg";
 
 const HomePage: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [userConfirmed, setUserConfirmed] = useState<boolean>(false);
-  const [newEmail, setNewEmail] = useState("");
-  const [newPassword, setNewPassword] = useState("");
+  const [, setUserConfirmed] = useState<boolean>(false);
   const navigate = useNavigate();
   const storage = getStorage();
   const auth = getAuth();
@@ -89,16 +87,50 @@ const HomePage: React.FC = () => {
     loadImages();
 
     const storedMinutes = parseInt(localStorage.getItem("minutes") || "0", 10);
-    const storedConsecutiveDays = parseInt(
-      localStorage.getItem("consecutiveDays") || "0",
-      10
-    );
-
+    const storedConsecutiveDays = parseInt(localStorage.getItem("consecutiveDays") || "0", 10);
     setUserProgress({
       minutes: storedMinutes,
       consecutiveDays: storedConsecutiveDays,
     });
   }, [storage]);
+
+  const handleAudioPlay = (audioFile: string) => {
+    const audio = new Audio(audioFile);
+    audio.play();
+
+    // Registra o tempo de audição do áudio
+    let startTime = Date.now();
+    audio.ontimeupdate = () => {
+      const elapsedTime = Math.floor((Date.now() - startTime) / 1000); // tempo em segundos
+      const updatedMinutes = userProgress.minutes + Math.floor(elapsedTime / 60); // Converte para minutos
+
+      setUserProgress((prevProgress) => {
+        const newProgress = {
+          ...prevProgress,
+          minutes: updatedMinutes,
+        };
+
+        // Atualiza o progresso no localStorage
+        localStorage.setItem("minutes", updatedMinutes.toString());
+        return newProgress;
+      });
+    };
+
+    audio.onended = () => {
+      const updatedDays = userProgress.consecutiveDays + 1;
+
+      setUserProgress((prevProgress) => {
+        const newProgress = {
+          ...prevProgress,
+          consecutiveDays: updatedDays,
+        };
+
+        // Atualiza o progresso no localStorage
+        localStorage.setItem("consecutiveDays", updatedDays.toString());
+        return newProgress;
+      });
+    };
+  };
 
   function handleUpdate(email: string, password: string, isConfirmed: boolean): void {
     setUserConfirmed(isConfirmed);
@@ -160,19 +192,6 @@ const HomePage: React.FC = () => {
         console.error("Erro ao fazer logout:", error);
       });
   }
-
-  const handleMeditationCompletion = (minutesSpent: number) => {
-    const updatedMinutes = userProgress.minutes + minutesSpent;
-    const updatedDays = userProgress.consecutiveDays + 1; 
-
-    setUserProgress({
-      minutes: updatedMinutes,
-      consecutiveDays: updatedDays,
-    });
-
-    localStorage.setItem("minutes", updatedMinutes.toString());
-    localStorage.setItem("consecutiveDays", updatedDays.toString());
-  };
 
   return (
     <Container>
