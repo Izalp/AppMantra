@@ -30,8 +30,8 @@ const audioList: AudioItem[] = [
   },
   {
     id: "audio4",
-    title: "Meditação para Relaxamento",
-    description: "Encontre paz e tranquilidade.",
+    title: "Meditação Zen",
+    description: "Busque alcançar a clareza mental.",
     imageFilePath: "images/meditacao4.jpg",
     audioFilePath: "audios/audio4.mp3",
   },
@@ -45,7 +45,7 @@ const audioList: AudioItem[] = [
   {
     id: "audio6",
     title: "Meditação para Concentração",
-    description: "Aumente o foco e a produtividade.",
+    description: "Se concentre e relaxe.",
     imageFilePath: "images/meditacao6.jpg",
     audioFilePath: "audios/audio6.mp3",
   },
@@ -59,7 +59,7 @@ const audioList: AudioItem[] = [
   {
     id: "audio8",
     title: "Meditação de Gratidão",
-    description: "Aumente seu senso de gratidão.",
+    description: "Agradeça por tudo.",
     imageFilePath: "images/meditacao8.jpg",
     audioFilePath: "audios/audio8.mp3",
   },
@@ -73,7 +73,7 @@ const audioList: AudioItem[] = [
   {
     id: "audio10",
     title: "Meditação para Paz Interior",
-    description: "Encontre a verdadeira paz.",
+    description: "Encontre a verdadeira paz dentro de si.",
     imageFilePath: "images/meditacao10.jpg",
     audioFilePath: "audios/audio10.mp3",
   },
@@ -86,7 +86,7 @@ const audioList: AudioItem[] = [
   },
   {
     id: "audio12",
-    title: "Meditação Profunda",
+    title: "Meditação de Técnica Profunda",
     description: "Entre em um estado profundo de relaxamento.",
     imageFilePath: "images/meditacao12.jpg",
     audioFilePath: "audios/audio12.mp3",

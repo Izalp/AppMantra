@@ -11,7 +11,7 @@ export const PageContainer = styled.div`
   background-color: #fff;
   color: #333;
   font-family: "Arial", sans-serif;
-  padding: 20px;
+
 `;
 
 export const Header = styled.header`
@@ -90,7 +90,7 @@ export const AudioGrid = styled.div`
   align-items: center;
   flex-wrap: wrap;
   margin-top: 10px;
-  margin-left: 70px;
+  margin-left: 10px;
   `;
 
 export const AudioCard = styled.div`
@@ -115,8 +115,8 @@ export const AudioCard = styled.div`
 
 export const AudioImage = styled.img`
   width: 100%;
-  height: auto;
-  max-height: 180px;
+  height: 180px;
+  object-fit: cover;
   border-radius: 10px;
   object-fit: contain;
   margin-bottom: 20px;
