@@ -90,6 +90,7 @@ const HomePage: React.FC = () => {
       alert("Erro ao carregar o áudio.");
     }
   };
+ 
 
   const pauseAudio = () => {
     if (audio) {
@@ -173,10 +174,10 @@ const HomePage: React.FC = () => {
               <h3>Música Relaxante 1</h3>
               <p>Desacelere e relaxe com músicas suaves que promovem tranquilidade e paz.</p>
               <AudioControlWrapper>
-                {isPlaying === "audios/audio4.mp3" ? (
+                {isPlaying === "audios/musica1.mp3" ? (
                   <PauseButton onClick={pauseAudio}>Pausar</PauseButton>
                 ) : (
-                  <PlayButton onClick={() => playAudio("audios/audio4.mp3")}>Começar agora</PlayButton>
+                  <PlayButton onClick={() => playAudio("audios/musica1.mp3")}>Começar agora</PlayButton>
                 )}
               </AudioControlWrapper>
             </SessionCard>
@@ -186,10 +187,10 @@ const HomePage: React.FC = () => {
               <h3>Música Relaxante 2</h3>
               <p>Com melodias suaves, essa música cria o ambiente perfeito para relaxar e meditar.</p>
               <AudioControlWrapper>
-                {isPlaying === "audios/audio5.mp3" ? (
+                {isPlaying === "audios/musica2.m4a" ? (
                   <PauseButton onClick={pauseAudio}>Pausar</PauseButton>
                 ) : (
-                  <PlayButton onClick={() => playAudio("audios/audio5.mp3")}>Começar agora</PlayButton>
+                  <PlayButton onClick={() => playAudio("audios/musica2.m4a")}>Começar agora</PlayButton>
                 )}
               </AudioControlWrapper>
             </SessionCard>
@@ -199,10 +200,10 @@ const HomePage: React.FC = () => {
               <h3>Música Relaxante 3</h3>
               <p>Permita-se relaxar e renovar suas energias com essa melodia suave que acalma a mente e o corpo.</p>
               <AudioControlWrapper>
-                {isPlaying === "audios/audio6.mp3" ? (
+                {isPlaying === "audios/musica3.m4a" ? (
                   <PauseButton onClick={pauseAudio}>Pausar</PauseButton>
                 ) : (
-                  <PlayButton onClick={() => playAudio("audios/audio6.mp3")}>Começar agora</PlayButton>
+                  <PlayButton onClick={() => playAudio("audios/musica3.m4a")}>Começar agora</PlayButton>
                 )}
               </AudioControlWrapper>
             </SessionCard>
