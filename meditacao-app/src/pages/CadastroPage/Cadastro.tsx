@@ -76,7 +76,9 @@ const CadastroPage: React.FC = () => {
       });
 
       setSuccessMessage("Cadastro realizado com sucesso!"); 
-      navigate("/"); 
+      setTimeout(() => {
+        navigate("/"); 
+      }, 1000); 
     } catch (error: any) {
       handleSignupError(error);
     }
