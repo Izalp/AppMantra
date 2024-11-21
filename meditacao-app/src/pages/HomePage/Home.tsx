@@ -94,44 +94,6 @@ const HomePage: React.FC = () => {
     });
   }, [storage]);
 
-  const handleAudioPlay = (audioFile: string) => {
-    const audio = new Audio(audioFile);
-    audio.play();
-
-    // Registra o tempo de audição do áudio
-    let startTime = Date.now();
-    audio.ontimeupdate = () => {
-      const elapsedTime = Math.floor((Date.now() - startTime) / 1000); // tempo em segundos
-      const updatedMinutes = userProgress.minutes + Math.floor(elapsedTime / 60); // Converte para minutos
-
-      setUserProgress((prevProgress) => {
-        const newProgress = {
-          ...prevProgress,
-          minutes: updatedMinutes,
-        };
-
-        // Atualiza o progresso no localStorage
-        localStorage.setItem("minutes", updatedMinutes.toString());
-        return newProgress;
-      });
-    };
-
-    audio.onended = () => {
-      const updatedDays = userProgress.consecutiveDays + 1;
-
-      setUserProgress((prevProgress) => {
-        const newProgress = {
-          ...prevProgress,
-          consecutiveDays: updatedDays,
-        };
-
-        // Atualiza o progresso no localStorage
-        localStorage.setItem("consecutiveDays", updatedDays.toString());
-        return newProgress;
-      });
-    };
-  };
-
   function handleUpdate(email: string, password: string, isConfirmed: boolean): void {
     setUserConfirmed(isConfirmed);
   
