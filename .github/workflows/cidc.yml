@@ -4,6 +4,10 @@ on:
     branches:
       - main
       - Develop
+      - Iza
+      - Thomas
+      - Gabriella
+      - Marcos
 
 jobs:
   build:
