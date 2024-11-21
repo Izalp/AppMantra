@@ -43,13 +43,8 @@ const MusicPage: React.FC = () => {
     };
   }>({});
   const [imageUrls, setImageUrls] = useState<{ [key: string]: string }>({});
-  const [currentTime, setCurrentTime] = useState(0);
-  const [duration, setDuration] = useState<number>(0);
-  const [userConfirmed, setUserConfirmed] = useState<boolean>(false);
-  const [newEmail, setNewEmail] = useState("");
-  const [newPassword, setNewPassword] = useState("");
+  const [, setUserConfirmed] = useState<boolean>(false);
   const navigate = useNavigate();
-  const storage = getStorage();
   const auth = getAuth();
 
   useEffect(() => {
@@ -77,10 +72,8 @@ const MusicPage: React.FC = () => {
   }, []);
 
   const playAudio = async (audioFilePath: string) => {
-    // Se o áudio já está sendo tocado, pausa o áudio atual e zera o tempo do anterior
     const currentAudioState = audioStates[audioFilePath];
 
-    // Se houver um áudio em execução, pausa ele e zera o tempo
     if (currentAudioState && currentAudioState.isPlaying) {
       currentAudioState.audio?.pause();
       setAudioStates((prevState) => ({
@@ -88,17 +81,16 @@ const MusicPage: React.FC = () => {
         [audioFilePath]: {
           ...currentAudioState,
           isPlaying: false,
-          currentTime: 0, // Zera o tempo do áudio que já está tocando
+          currentTime: 0, 
         },
       }));
     } else {
-      // Pause outros áudios em execução
       for (const key in audioStates) {
         if (audioStates[key].isPlaying && key !== audioFilePath) {
           audioStates[key].audio?.pause();
           setAudioStates((prevState) => ({
             ...prevState,
-            [key]: { ...audioStates[key], isPlaying: false, currentTime: 0 }, // Zera o tempo do áudio pausado
+            [key]: { ...audioStates[key], isPlaying: false, currentTime: 0 },
           }));
         }
       }
@@ -110,7 +102,6 @@ const MusicPage: React.FC = () => {
         const url = await getDownloadURL(audioRef);
         const newAudio = new Audio(url);
 
-        // Se o áudio atual foi pausado, mantenha o tempo que ele parou
         newAudio.currentTime = currentAudioState
           ? currentAudioState.currentTime
           : 0;
@@ -126,7 +117,7 @@ const MusicPage: React.FC = () => {
             [audioFilePath]: {
               isPlaying: true,
               audio: newAudio,
-              currentTime: 0, // Começa do 0 para o novo áudio
+              currentTime: 0, 
               duration: newAudio.duration,
             },
           }));
@@ -137,7 +128,7 @@ const MusicPage: React.FC = () => {
             ...prevState,
             [audioFilePath]: {
               ...prevState[audioFilePath],
-              currentTime: newAudio.currentTime, // Atualiza o tempo
+              currentTime: newAudio.currentTime,
             },
           }));
         };
@@ -147,8 +138,8 @@ const MusicPage: React.FC = () => {
             ...prevState,
             [audioFilePath]: {
               ...prevState[audioFilePath],
-              isPlaying: false, // Marca como pausado quando o áudio terminar
-              currentTime: 0, // Zera o tempo do áudio ao final
+              isPlaying: false,
+              currentTime: 0,
             },
           }));
         };

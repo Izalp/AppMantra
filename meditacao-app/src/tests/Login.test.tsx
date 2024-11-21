@@ -20,9 +20,9 @@ describe("LoginPage", () => {
     });
 
     render(
-      <MemoryRouter initialEntries={["/login"]}>
+      <MemoryRouter initialEntries={["/"]}>
         <Routes>
-          <Route path="/login" element={<LoginPage />} />
+          <Route path="/" element={<LoginPage />} />
           <Route path="/home" element={<HomePage />} />
         </Routes>
       </MemoryRouter>
@@ -36,7 +36,7 @@ describe("LoginPage", () => {
     });
     fireEvent.click(screen.getByRole("button", { name: /entrar/i }));
 
-    const dashboardText = await screen.findByText(/Bem-vindo Usuário!/i);
+    const dashboardText = await screen.findByText(/Bem-vindo à sua Jornada de Meditação/i);
     expect(dashboardText).toBeInTheDocument();
   });
 
