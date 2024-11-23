@@ -11,8 +11,8 @@ export const Container = styled.div`
   background-position: center; 
 `;
 
-export const LoginForm = styled.form`
-  background: rgba(255, 255, 255, 255); 
+export const SignupForm = styled.form`
+  background: #fff;
   padding: 40px;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -25,13 +25,24 @@ export const LoginForm = styled.form`
 
 export const Logo = styled.img`
   width: 150px; 
-  margin-bottom: 24px;
+  margin: -30px 0 24px 0;
 `;
 
 export const InputWrapper = styled.div`
   width: 100%;
-  margin-bottom: 16px;
-  color: #fdfdfd;
+  margin-bottom: 7px;
+`;
+
+export const IconWrapper = styled.div`
+  position: absolute;
+  right: 10px;
+  top: 5px;
+  cursor: pointer;
+  color: #333;
+  font-size: 20px;
+  &:hover {
+    color: #f35482;
+  }
 `;
 
 export const Label = styled.label`
@@ -55,52 +66,6 @@ export const Input = styled.input`
   }
 `;
 
-export const ForgotPassword = styled.a`
-  display: block;
-  margin-top: 8px;
-  font-size: 12px;
-  color: #333;
-  text-align: left;
-  cursor: pointer;
-  text-decoration: none;
-  font-weight: bold;
-
-  &:hover {
-    text-decoration: underline;
-  }
-`;
-
-export const SignupPrompt = styled.span`
-  font-size: 12px; 
-  color: #333; 
-  text-align: left; 
-  margin-top: 24px; 
-  width: 100%; 
-`;
-export const SignupLink = styled.a`
-  color: #333; 
-  text-decoration: none;
-  font-weight: bold; 
-  text-align: left;
-
-  &:hover {
-    text-decoration: underline; 
-  }
-`;
-
-export const IconWrapper = styled.div`
-  position: absolute;
-  right: 10px;
-  top: 5px;
-  cursor: pointer;
-  color: #333;
-  font-size: 20px;
-  &:hover {
-    color: #f35482;
-  }
-`;
-
-
 export const Button = styled.button`
   width: 40%;
   padding: 12px;
@@ -116,8 +81,40 @@ export const Button = styled.button`
   }
 `;
 
+export const SignupPrompt = styled.span`
+  font-size: 12px; 
+  color: #333; 
+  text-align: left; 
+  margin-top: 24px; 
+  width: 100%; 
+`;
+
+export const LoginLink = styled.a`
+  color: #333; 
+  text-decoration: none;
+  font-weight: bold; 
+  text-align: left;
+
+  &:hover {
+    text-decoration: underline; 
+  }
+`;
+
 export const ErrorMessage = styled.span`
   color: red;
   font-size: 12px;
   margin-top: 4px;
+`;
+
+export const SuccessMessage = styled.div`
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background-color: #d4edda; 
+  color: #155724; 
+  padding: 10px 20px; 
+  border: 1px solid #c3e6cb; 
+  border-radius: 5px; 
+  z-index: 1000; 
+  transition: opacity 0.5s ease; 
 `;

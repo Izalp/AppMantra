@@ -7,21 +7,21 @@ on:
 
 jobs:
   build:
-      name: build
-      runs-on: ubuntu-latest
-      steps:
-        - uses: actions/checkout@v4
-        - name: Use Node.js 20
-          uses: actions/setup-node@v4
-          with:
-            node-version: "20"
-        - name: Install dependencies
-          run: npm install
-          working-directory: meditacao-app
-        - name: Run build
-          run: npm run build
-          working-directory: meditacao-app
-  
+    name: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Install dependencies
+        run: npm install
+        working-directory: meditacao-app
+      - name: Run build
+        run: npm run build
+        working-directory: meditacao-app
+
   test:
     name: Running unit-tests
     runs-on: ubuntu-latest
