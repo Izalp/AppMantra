@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { getAuth, sendPasswordResetEmail } from "firebase/auth";  
+import { fetchSignInMethodsForEmail, getAuth, sendPasswordResetEmail } from "firebase/auth";  
 import { 
   Container, 
   LoginForm, 
@@ -19,16 +19,37 @@ const RedefinirSenhaPage: React.FC = () => {
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
+
+    if (!email) {
+      setError("Preencha este campo");
+      setMessage(""); 
+      return;
+    }
+
     const auth = getAuth();  
 
     try {
+      const signInMethods = await fetchSignInMethodsForEmail(auth, email);
+
+      if (signInMethods.length === 0) {
+        setError("Este e-mail não está registrado.");
+        setMessage(""); 
+        return;
+      }
+
       await sendPasswordResetEmail(auth, email);
       setMessage("Um e-mail para redefinição de senha foi enviado. Verifique sua caixa de entrada.");
-      setError("");
+      setError(""); 
     } catch (error) {
-      setError("Não foi possível enviar o e-mail. Verifique se o e-mail está correto.");
-      setMessage("");
+      setError("Ocorreu um erro ao enviar o e-mail. Tente novamente.");
+      setMessage(""); 
     }
+  };
+
+  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setEmail(e.target.value);
+    setMessage(""); 
+    setError("");   
   };
 
   return (
@@ -40,16 +61,17 @@ const RedefinirSenhaPage: React.FC = () => {
           Insira seu e-mail abaixo e enviaremos instruções para redefinir sua senha.
         </p>
         <InputWrapper>
-          <Label>Email</Label>
+        <Label htmlFor="email">Email</Label>
           <Input
+            id="email"
             type="email"
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={handleEmailChange} 
             required
           />
         </InputWrapper>
-        {message && <p style={{ color: "#4CAF50", fontSize: "12px", marginTop: "8px" }}>{message}</p>}
         {error && <ErrorMessage>{error}</ErrorMessage>}
+        {message && <p style={{ color: "#4CAF50", fontSize: "12px", marginTop: "8px" }}>{message}</p>}
         <Button type="submit">Enviar</Button>
       </LoginForm>
     </Container>
