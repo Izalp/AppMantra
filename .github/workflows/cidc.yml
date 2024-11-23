@@ -42,7 +42,7 @@ jobs:
         run: npm install
         working-directory: meditacao-app
 
-      - name: Run unit tests
+      - name: Run unit tests (Meditation.test.tsx)
         run: npm run test
         working-directory: meditacao-app
 
