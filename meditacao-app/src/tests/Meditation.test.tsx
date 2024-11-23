@@ -42,7 +42,7 @@ describe("MeditationPage", () => {
       );
     });
 
-    const meditationTitle = screen.getByText(/Meditação Diária/i);
+    const meditationTitle = screen.getByText(/Meditações/i);
     expect(meditationTitle).toBeInTheDocument();
   });
 

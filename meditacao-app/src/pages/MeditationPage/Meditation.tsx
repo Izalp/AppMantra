@@ -31,7 +31,13 @@ import logo from "../../assets/logo2.png";
 import { FaPlay, FaPause, FaForward, FaHome, FaMusic } from "react-icons/fa";
 import { GiYinYang } from "react-icons/gi";
 import { NavLink, useNavigate } from "react-router-dom";
-import { deleteUser, getAuth, signOut, updateEmail, updatePassword } from "firebase/auth";
+import {
+  deleteUser,
+  getAuth,
+  signOut,
+  updateEmail,
+  updatePassword,
+} from "firebase/auth";
 
 const MeditationPage: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -47,7 +53,6 @@ const MeditationPage: React.FC = () => {
   const [, setUserConfirmed] = useState<boolean>(false);
   const navigate = useNavigate();
   const auth = getAuth();
-
 
   useEffect(() => {
     const storage = getStorage();
@@ -83,7 +88,7 @@ const MeditationPage: React.FC = () => {
         [audioFilePath]: {
           ...currentAudioState,
           isPlaying: false,
-          currentTime: 0, 
+          currentTime: 0,
         },
       }));
     } else {
@@ -92,7 +97,7 @@ const MeditationPage: React.FC = () => {
           audioStates[key].audio?.pause();
           setAudioStates((prevState) => ({
             ...prevState,
-            [key]: { ...audioStates[key], isPlaying: false, currentTime: 0 }, 
+            [key]: { ...audioStates[key], isPlaying: false, currentTime: 0 },
           }));
         }
       }
@@ -119,7 +124,7 @@ const MeditationPage: React.FC = () => {
             [audioFilePath]: {
               isPlaying: true,
               audio: newAudio,
-              currentTime: 0, 
+              currentTime: 0,
               duration: newAudio.duration,
             },
           }));
@@ -130,7 +135,7 @@ const MeditationPage: React.FC = () => {
             ...prevState,
             [audioFilePath]: {
               ...prevState[audioFilePath],
-              currentTime: newAudio.currentTime, 
+              currentTime: newAudio.currentTime,
             },
           }));
         };
@@ -140,8 +145,8 @@ const MeditationPage: React.FC = () => {
             ...prevState,
             [audioFilePath]: {
               ...prevState[audioFilePath],
-              isPlaying: false, 
-              currentTime: 0, 
+              isPlaying: false,
+              currentTime: 0,
             },
           }));
         };
@@ -181,12 +186,16 @@ const MeditationPage: React.FC = () => {
     return `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
   };
 
-  function handleUpdate(email: string, password: string, isConfirmed: boolean): void {
+  function handleUpdate(
+    email: string,
+    password: string,
+    isConfirmed: boolean
+  ): void {
     setUserConfirmed(isConfirmed);
-  
+
     if (isConfirmed && auth.currentUser) {
       const promises = [];
-  
+
       if (email) {
         promises.push(
           updateEmail(auth.currentUser, email).catch((error) =>
@@ -194,7 +203,7 @@ const MeditationPage: React.FC = () => {
           )
         );
       }
-  
+
       if (password) {
         promises.push(
           updatePassword(auth.currentUser, password).catch((error) =>
@@ -202,7 +211,7 @@ const MeditationPage: React.FC = () => {
           )
         );
       }
-  
+
       Promise.all(promises)
         .then(() => {
           console.log("E-mail e/ou senha atualizados com sucesso.");
@@ -215,14 +224,14 @@ const MeditationPage: React.FC = () => {
       console.error("Usuário não autenticado.");
     }
   }
-  
+
   function handleDeleteAccount(isConfirmed: boolean): void {
     setUserConfirmed(isConfirmed);
     if (isConfirmed && auth.currentUser) {
       deleteUser(auth.currentUser)
         .then(() => {
           console.log("Conta excluída com sucesso.");
-          navigate("/"); 
+          navigate("/");
         })
         .catch((error) => {
           console.error("Erro ao excluir conta:", error);
@@ -272,7 +281,7 @@ const MeditationPage: React.FC = () => {
           Não importa onde você esteja na sua jornada, a meditação está sempre
           aqui para guiá-lo de volta ao momento presente.
         </p>
-        <p>Respire fundo e comece sua praticando agora</p>
+        <p>Respire fundo e comece sua prática agora.</p>
       </Motivation>
 
       <AudioGrid>
@@ -309,76 +318,66 @@ const MeditationPage: React.FC = () => {
                   <FaPlay size={24} />
                 </ControlButton>
               )}
-
               <ProgressBarContainer>
                 <ProgressBar
-                  width={
-                    ((currentAudioState?.currentTime || 0) /
-                      (currentAudioState?.duration || 1)) *
-                    100
+                  value={
+                    currentAudioState
+                      ? (currentAudioState.currentTime /
+                          currentAudioState.duration) *
+                        100
+                      : 0
                   }
+                  max="100"
                 />
+                <TimeDisplayContainer>
+                  <TimeDisplay>
+                    {currentAudioState
+                      ? formatTime(currentAudioState.currentTime)
+                      : "00:00"}
+                  </TimeDisplay>
+                  <TimeDisplay>
+                    {currentAudioState
+                      ? formatTime(currentAudioState.duration)
+                      : "00:00"}
+                  </TimeDisplay>
+                </TimeDisplayContainer>
               </ProgressBarContainer>
-
-              <TimeDisplayContainer>
-                <TimeDisplay>
-                  {formatTime(currentAudioState?.currentTime || 0)}
-                </TimeDisplay>
-                <TimeDisplay>
-                  {formatTime(currentAudioState?.duration || 0)}
-                </TimeDisplay>
-              </TimeDisplayContainer>
             </AudioCard>
           );
         })}
       </AudioGrid>
 
-      <FooterNavBar modalOpen={isModalOpen}>
-        <NavLink
-          to="/home"
-          className={({ isActive }) => (isActive ? "active" : "")}
-        >
-          <NavItem>
+      <FooterNavBar>
+        <NavItem>
+          <NavLink to="/">
             <NavIcon>
-              <FaHome />
+              <FaHome size={24} />
             </NavIcon>
-            <span>Home</span>
-          </NavItem>
-        </NavLink>
-
-        <NavLink
-          to="/meditacoes"
-          className={({ isActive }) => (isActive ? "active" : "")}
-        >
-          <NavItem>
+          </NavLink>
+        </NavItem>
+        <NavItem>
+          <NavLink to="/music">
             <NavIcon>
-              <GiYinYang />
+              <FaMusic size={24} />
             </NavIcon>
-            <span>Meditação</span>
-          </NavItem>
-        </NavLink>
-
-        <NavLink
-          to="/musicas"
-          className={({ isActive }) => (isActive ? "active" : "")}
-        >
-          <NavItem>
+          </NavLink>
+        </NavItem>
+        <NavItem>
+          <NavLink to="/meditation">
             <NavIcon>
-              <FaMusic />
+              <GiYinYang size={24} />
             </NavIcon>
-            <span>Música</span>
-          </NavItem>
-        </NavLink>
+          </NavLink>
+        </NavItem>
       </FooterNavBar>
 
-      {isModalOpen && (
-        <SettingsModal
-          closeModal={() => setIsModalOpen(false)}
-          onUpdate={handleUpdate}
-          onDeleteAccount={handleDeleteAccount}
-          onLogout={handleLogout}
-        />
-      )}
+      <SettingsModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onUpdate={handleUpdate}
+        onDeleteAccount={handleDeleteAccount}
+        onLogout={handleLogout}
+      />
     </PageContainer>
   );
 };
