@@ -1,5 +1,5 @@
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-import { MeditationPage } from "../pages/MeditationPage/Meditation"; // Certifique-se de importar corretamente
+import MeditationPage from "../pages/MeditationPage/Meditation";
 import { getDownloadURL } from "firebase/storage";
 import audioList from "../../components/AudiosMeditacao/Meditacoes";
 
