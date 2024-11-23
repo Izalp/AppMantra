@@ -15,11 +15,10 @@ jest.mock("firebase/auth", () => ({
     currentUser: null,
     signInWithEmailAndPassword: jest.fn(),
     deleteUser: jest.fn().mockResolvedValueOnce(undefined), 
-  })),
-  signOut: jest.fn(() => Promise.resolve()),
-  deleteUser: jest.fn(() => Promise.resolve()),
-  updateEmail: jest.fn(() => Promise.resolve()),
-  updatePassword: jest.fn(() => Promise.resolve()),
+    signOut: jest.fn().mockResolvedValueOnce(undefined),
+    updateEmail: jest.fn().mockResolvedValueOnce(undefined),
+    updatePassword: jest.fn().mockResolvedValueOnce(undefined),
+  }))
 }));
 
 jest.mock("firebase/storage", () => ({
@@ -36,12 +35,17 @@ jest.mock("react-router-dom", () => ({
 
 const mockDeleteUser = jest.fn();
 const mockCloseModal = jest.fn();
+const mockLogout = jest.fn();
 
 global.console.error = jest.fn();
 
 describe("HomePage", () => {
   beforeEach(() => {
     jest.resetAllMocks();
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
   });
 
   test("deve renderizar o título principal corretamente", () => {
@@ -223,6 +227,29 @@ describe("HomePage", () => {
     expect(mockDeleteUser).toHaveBeenCalledTimes(1);
   });
 
+  test("não deve chamar deleteUser ao tentar excluir a conta se não houver confirmação", () => {
+    render(
+      <SettingsModal
+        closeModal={jest.fn()}
+        onUpdate={jest.fn()}
+        onDeleteAccount={mockDeleteUser}
+        onLogout={jest.fn()}
+      />
+    );
+
+    const deleteButton = screen.getByRole("button", { name: /Excluir Conta/i });
+    expect(deleteButton).toBeInTheDocument();
+
+    fireEvent.click(deleteButton);
+
+    const confirmDeleteButton = screen.getByRole("button", { name: /Cancelar/i, });
+    expect(confirmDeleteButton).toBeInTheDocument();
+
+    fireEvent.click(confirmDeleteButton);
+
+    expect(mockDeleteUser).not.toHaveBeenCalled();
+  });
+
   test("deve chamar o catch quando ocorrer um erro ao carregar as imagens", async () => {
     (getDownloadURL as jest.Mock).mockRejectedValueOnce(new Error("Erro ao carregar imagem"));
 
@@ -265,5 +292,25 @@ describe("HomePage", () => {
 
     closeModal();
     expect(setIsModalOpen).toHaveBeenCalledWith(false); 
+  });
+
+  test("deve realizar logout com sucesso", async () => {
+    const navigate = jest.fn();
+    require("react-router-dom").useNavigate.mockReturnValue(navigate);
+
+    render(
+      <SettingsModal
+        closeModal={jest.fn()}
+        onUpdate={jest.fn()}
+        onDeleteAccount={jest.fn()}
+        onLogout={mockLogout}
+      />
+    );
+
+    const logoutButton = screen.getByRole("button", { name: /Logout/i });
+    expect(logoutButton).toBeInTheDocument();
+    fireEvent.click(logoutButton);
+
+    expect(mockLogout).toHaveBeenCalledTimes(1);
   });
 });
