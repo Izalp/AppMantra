@@ -31,13 +31,7 @@ import logo from "../../assets/logo2.png";
 import { FaPlay, FaPause, FaForward, FaHome, FaMusic } from "react-icons/fa";
 import { GiYinYang } from "react-icons/gi";
 import { NavLink, useNavigate } from "react-router-dom";
-import {
-  deleteUser,
-  getAuth,
-  signOut,
-  updateEmail,
-  updatePassword,
-} from "firebase/auth";
+import { deleteUser, getAuth, signOut, updateEmail, updatePassword } from "firebase/auth";
 
 const MeditationPage: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -65,10 +59,7 @@ const MeditationPage: React.FC = () => {
           const url = await getDownloadURL(imageRef);
           urls[audioItem.id] = url;
         } catch (error) {
-          console.error(
-            `Erro ao carregar a imagem para ${audioItem.id}:`,
-            error
-          );
+          console.error(`Erro ao carregar a imagem para ${audioItem.id}:`, error);
         }
       }
 
@@ -88,7 +79,7 @@ const MeditationPage: React.FC = () => {
         [audioFilePath]: {
           ...currentAudioState,
           isPlaying: false,
-          currentTime: 0,
+          currentTime: 0, 
         },
       }));
     } else {
@@ -97,7 +88,7 @@ const MeditationPage: React.FC = () => {
           audioStates[key].audio?.pause();
           setAudioStates((prevState) => ({
             ...prevState,
-            [key]: { ...audioStates[key], isPlaying: false, currentTime: 0 },
+            [key]: { ...audioStates[key], isPlaying: false, currentTime: 0 }, 
           }));
         }
       }
@@ -109,9 +100,7 @@ const MeditationPage: React.FC = () => {
         const url = await getDownloadURL(audioRef);
         const newAudio = new Audio(url);
 
-        newAudio.currentTime = currentAudioState
-          ? currentAudioState.currentTime
-          : 0;
+        newAudio.currentTime = currentAudioState ? currentAudioState.currentTime : 0;
 
         newAudio.play().catch((error) => {
           console.error("Erro ao reproduzir o áudio:", error);
@@ -124,7 +113,7 @@ const MeditationPage: React.FC = () => {
             [audioFilePath]: {
               isPlaying: true,
               audio: newAudio,
-              currentTime: 0,
+              currentTime: 0, 
               duration: newAudio.duration,
             },
           }));
@@ -135,7 +124,7 @@ const MeditationPage: React.FC = () => {
             ...prevState,
             [audioFilePath]: {
               ...prevState[audioFilePath],
-              currentTime: newAudio.currentTime,
+              currentTime: newAudio.currentTime, 
             },
           }));
         };
@@ -145,8 +134,8 @@ const MeditationPage: React.FC = () => {
             ...prevState,
             [audioFilePath]: {
               ...prevState[audioFilePath],
-              isPlaying: false,
-              currentTime: 0,
+              isPlaying: false, 
+              currentTime: 0, 
             },
           }));
         };
@@ -186,11 +175,7 @@ const MeditationPage: React.FC = () => {
     return `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
   };
 
-  function handleUpdate(
-    email: string,
-    password: string,
-    isConfirmed: boolean
-  ): void {
+  function handleUpdate(email: string, password: string, isConfirmed: boolean): void {
     setUserConfirmed(isConfirmed);
 
     if (isConfirmed && auth.currentUser) {
@@ -231,7 +216,7 @@ const MeditationPage: React.FC = () => {
       deleteUser(auth.currentUser)
         .then(() => {
           console.log("Conta excluída com sucesso.");
-          navigate("/");
+          navigate("/"); 
         })
         .catch((error) => {
           console.error("Erro ao excluir conta:", error);
@@ -265,22 +250,10 @@ const MeditationPage: React.FC = () => {
       <Title>Meditações</Title>
 
       <Motivation>
-        <p>
-          Em meio ao caos diário, é fácil se perder em pensamentos acelerados e
-          preocupações.
-        </p>
-        <p>
-          A meditação oferece uma pausa, onde você pode se reconectar com sua
-          essência.
-        </p>
-        <p>
-          Experimente nossos áudios e relaxe em sessões criadas para ajudar você
-          a alcançar um estado de paz e clareza.
-        </p>
-        <p>
-          Não importa onde você esteja na sua jornada, a meditação está sempre
-          aqui para guiá-lo de volta ao momento presente.
-        </p>
+        <p>Em meio ao caos diário, é fácil se perder em pensamentos acelerados e preocupações.</p>
+        <p>A meditação oferece uma pausa, onde você pode se reconectar com sua essência.</p>
+        <p>Experimente nossos áudios e relaxe em sessões criadas para ajudar você a alcançar um estado de paz e clareza.</p>
+        <p>Não importa onde você esteja na sua jornada, a meditação está sempre aqui para guiá-lo de volta ao momento presente.</p>
         <p>Respire fundo e comece sua prática agora.</p>
       </Motivation>
 
@@ -296,49 +269,29 @@ const MeditationPage: React.FC = () => {
               </AudioInfo>
               {currentAudioState?.isPlaying ? (
                 <div style={{ display: "flex", justifyContent: "center" }}>
-                  <ControlButton
-                    onClick={() => pauseAudio(audioItem.audioFilePath)}
-                    className="pause"
-                  >
+                  <ControlButton onClick={() => pauseAudio(audioItem.audioFilePath)} className="pause">
                     <FaPause size={24} />
                   </ControlButton>
-                  <ControlButton
-                    onClick={() => skipAudio(audioItem.audioFilePath)}
-                    className="skip"
-                    style={{ marginLeft: "10px" }}
-                  >
+                  <ControlButton onClick={() => skipAudio(audioItem.audioFilePath)} className="skip" style={{ marginLeft: "10px" }}>
                     <FaForward size={24} />
                   </ControlButton>
                 </div>
               ) : (
-                <ControlButton
-                  onClick={() => playAudio(audioItem.audioFilePath)}
-                  className="play"
-                >
+                <ControlButton onClick={() => playAudio(audioItem.audioFilePath)} className="play">
                   <FaPlay size={24} />
                 </ControlButton>
               )}
               <ProgressBarContainer>
                 <ProgressBar
-                  value={
-                    currentAudioState
-                      ? (currentAudioState.currentTime /
-                          currentAudioState.duration) *
-                        100
-                      : 0
-                  }
+                  value={currentAudioState ? (currentAudioState.currentTime / currentAudioState.duration) * 100 : 0}
                   max="100"
                 />
                 <TimeDisplayContainer>
                   <TimeDisplay>
-                    {currentAudioState
-                      ? formatTime(currentAudioState.currentTime)
-                      : "00:00"}
+                    {currentAudioState ? formatTime(currentAudioState.currentTime) : "00:00"}
                   </TimeDisplay>
                   <TimeDisplay>
-                    {currentAudioState
-                      ? formatTime(currentAudioState.duration)
-                      : "00:00"}
+                    {currentAudioState ? formatTime(currentAudioState.duration) : "00:00"}
                   </TimeDisplay>
                 </TimeDisplayContainer>
               </ProgressBarContainer>
