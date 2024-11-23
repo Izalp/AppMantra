@@ -94,6 +94,10 @@ const HomePage: React.FC = () => {
     });
   }, [storage]);
 
+  const closeModal = () => {
+    setIsModalOpen(false);  
+  };
+
   function handleUpdate(email: string, password: string, isConfirmed: boolean): void {
     setUserConfirmed(isConfirmed);
   
@@ -162,7 +166,7 @@ const HomePage: React.FC = () => {
           <Logo src={logo} alt="Logo" />
           <NavBar>
             <SettingsButton onClick={() => setIsModalOpen(true)}>
-              <IconWrapper uk-icon="icon: cog; ratio:1.5" />
+              <IconWrapper uk-icon="icon: cog; ratio:1.5" aria-label="Configurações" />
             </SettingsButton>
           </NavBar>
         </Header>
@@ -326,7 +330,7 @@ const HomePage: React.FC = () => {
 
         {isModalOpen && (
           <SettingsModal
-            closeModal={() => setIsModalOpen(false)}
+            closeModal={closeModal}
             onUpdate={handleUpdate}
             onDeleteAccount={handleDeleteAccount}
             onLogout={handleLogout}

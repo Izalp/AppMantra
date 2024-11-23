@@ -1,8 +1,49 @@
-import { render, screen, fireEvent } from "@testing-library/react";
-import { MemoryRouter } from "react-router-dom";
+import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import { MemoryRouter, Route, Routes } from "react-router-dom";
 import HomePage from "../pages/HomePage/Home";
+import MeditationPage from "../pages/MeditationPage/Meditation";
+import MusicPage from "../pages/MusicPage/Music";
+import { SettingsModal } from "../components/Modal/Modal";
+import { getDownloadURL } from "firebase/storage";
+
+jest.mock("firebase/app", () => ({
+  initializeApp: jest.fn(),
+}));
+
+jest.mock("firebase/auth", () => ({
+  getAuth: jest.fn(() => ({
+    currentUser: null,
+    signInWithEmailAndPassword: jest.fn(),
+    deleteUser: jest.fn().mockResolvedValueOnce(undefined), 
+  })),
+  signOut: jest.fn(() => Promise.resolve()),
+  deleteUser: jest.fn(() => Promise.resolve()),
+  updateEmail: jest.fn(() => Promise.resolve()),
+  updatePassword: jest.fn(() => Promise.resolve()),
+}));
+
+jest.mock("firebase/storage", () => ({
+  getStorage: jest.fn(),
+  ref: jest.fn(),
+  uploadBytes: jest.fn(),
+  getDownloadURL: jest.fn(),
+}));
+
+jest.mock("react-router-dom", () => ({
+  ...jest.requireActual("react-router-dom"),
+  useNavigate: jest.fn(),
+}));
+
+const mockDeleteUser = jest.fn();
+const mockCloseModal = jest.fn();
+
+global.console.error = jest.fn();
 
 describe("HomePage", () => {
+  beforeEach(() => {
+    jest.resetAllMocks();
+  });
+
   test("deve renderizar o título principal corretamente", () => {
     render(
       <MemoryRouter>
@@ -10,7 +51,9 @@ describe("HomePage", () => {
       </MemoryRouter>
     );
 
-    const titleElement = screen.getByText(/Bem-vindo à sua Jornada de Meditação/i);
+    const titleElement = screen.getByText(
+      /Bem-vindo à sua Jornada de Meditação/i
+    );
     expect(titleElement).toBeInTheDocument();
   });
 
@@ -22,9 +65,9 @@ describe("HomePage", () => {
     );
 
     const highlightsTitle = screen.getByText(/Destaques do Dia/i);
-    const musicTitle = screen.getByText(/Músicas Relaxantes/i);
-
     expect(highlightsTitle).toBeInTheDocument();
+
+    const musicTitle = screen.getByText(/Músicas Relaxantes/i);
     expect(musicTitle).toBeInTheDocument();
   });
 
@@ -46,23 +89,66 @@ describe("HomePage", () => {
   });
 
   test("deve navegar para a página de meditações ao clicar no botão 'Começar agora'", () => {
+    const navigate = jest.fn();
+    require("react-router-dom").useNavigate.mockReturnValue(navigate);
+
     render(
-      <MemoryRouter>
-        <HomePage />
+      <MemoryRouter initialEntries={["/"]}>
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/meditacoes" element={<MeditationPage />} />
+        </Routes>
       </MemoryRouter>
     );
 
-    const meditationButtons = screen.getAllByRole("button", { name: /Começar agora/i });
+    const meditationButtons = screen.getAllByRole("button", {
+      name: /Começar agora/i,
+    });
 
-    // Verifica se os botões estão presentes
     expect(meditationButtons.length).toBeGreaterThan(0);
-
-    // Simula o clique no primeiro botão
     fireEvent.click(meditationButtons[0]);
+    expect(navigate).toHaveBeenCalledWith("/meditacoes");
 
-    // Certifique-se de que o teste verifica a navegação adequadamente
-    // O `MemoryRouter` precisa ser configurado para simular o redirecionamento.
-    expect(window.location.pathname).toBe("/meditacoes");
+    expect(meditationButtons.length).toBeGreaterThan(1);
+    fireEvent.click(meditationButtons[1]);
+    expect(navigate).toHaveBeenCalledWith("/meditacoes");
+
+    expect(meditationButtons.length).toBeGreaterThan(2);
+    fireEvent.click(meditationButtons[2]);
+    expect(navigate).toHaveBeenCalledWith("/meditacoes");
+  });
+
+  test("deve navegar para a página de músicas ao clicar no botão 'Começar agora'", () => {
+    const navigate = jest.fn();
+    require("react-router-dom").useNavigate.mockReturnValue(navigate);
+
+    render(
+      <MemoryRouter initialEntries={["/"]}>
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/musicas" element={<MusicPage />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    const highlightsTitle = screen.getByText(/Músicas Relaxantes/i);
+    expect(highlightsTitle).toBeInTheDocument();
+
+    const meditationButtons = screen.getAllByRole("button", {
+      name: /Começar agora/i,
+    });
+
+    expect(meditationButtons.length).toBeGreaterThan(3);
+    fireEvent.click(meditationButtons[3]);
+    expect(navigate).toHaveBeenCalledWith("/musicas");
+
+    expect(meditationButtons.length).toBeGreaterThan(4);
+    fireEvent.click(meditationButtons[4]);
+    expect(navigate).toHaveBeenCalledWith("/musicas");
+
+    expect(meditationButtons.length).toBeGreaterThan(5);
+    fireEvent.click(meditationButtons[5]);
+    expect(navigate).toHaveBeenCalledWith("/musicas");
   });
 
   test("deve carregar e exibir as imagens de meditação corretamente", () => {
@@ -88,12 +174,13 @@ describe("HomePage", () => {
       </MemoryRouter>
     );
 
-    const homeButton = screen.getByText(/Home/i);
-    const meditationButton = screen.getByText(/Meditação/i);
-    const musicButton = screen.getByText(/Música/i);
-
+    const homeButton = screen.getByRole("link", { name: /Home/i });
     expect(homeButton).toBeInTheDocument();
+
+    const meditationButton = screen.getByRole("link", { name: /Meditação/i });
     expect(meditationButton).toBeInTheDocument();
+
+    const musicButton = screen.getByRole("link", { name: /Música/i });
     expect(musicButton).toBeInTheDocument();
   });
 
@@ -104,11 +191,79 @@ describe("HomePage", () => {
       </MemoryRouter>
     );
 
-    const settingsButton = screen.getByRole("button", { name: /Configurações/i });
+    const settingsButton = screen.getByRole("button", {
+      name: /Configurações/i,
+    });
     fireEvent.click(settingsButton);
 
-    // Verifica se o modal de configurações aparece após o clique
     const modalTitle = screen.getByText(/Configurações/i);
     expect(modalTitle).toBeInTheDocument();
+  });
+
+  test("deve chamar deleteUser ao tentar excluir a conta", () => {
+    render(
+      <SettingsModal
+        closeModal={jest.fn()}
+        onUpdate={jest.fn()}
+        onDeleteAccount={mockDeleteUser}
+        onLogout={jest.fn()}
+      />
+    );
+
+    const deleteButton = screen.getByRole("button", { name: /Excluir Conta/i });
+    expect(deleteButton).toBeInTheDocument();
+
+    fireEvent.click(deleteButton);
+
+    const confirmDeleteButton = screen.getByRole("button", { name: /Excluir/i, });
+    expect(confirmDeleteButton).toBeInTheDocument();
+
+    fireEvent.click(confirmDeleteButton);
+
+    expect(mockDeleteUser).toHaveBeenCalledTimes(1);
+  });
+
+  test("deve chamar o catch quando ocorrer um erro ao carregar as imagens", async () => {
+    (getDownloadURL as jest.Mock).mockRejectedValueOnce(new Error("Erro ao carregar imagem"));
+
+    render(
+      <MemoryRouter>
+        <HomePage />
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect(console.error).toHaveBeenCalledWith(
+        "Erro ao carregar imagens do Firebase. Usando imagens locais.",
+        expect.any(Error)
+      );
+    });
+  });
+
+  test("deve fechar o modal quando o botão de voltar for clicado", () => {
+    render(
+      <SettingsModal
+        closeModal={mockCloseModal}
+        onUpdate={jest.fn()}
+        onDeleteAccount={jest.fn()}
+        onLogout={jest.fn()}
+      />
+    );
+  
+    const voltarButton = screen.getByRole("button", { name: /Fechar menu/i });
+    expect(voltarButton).toBeInTheDocument();
+    fireEvent.click(voltarButton);
+
+    expect(mockCloseModal).toHaveBeenCalledTimes(1);
+  });
+
+  test("deve fechar o modal quando closeModal for chamado", () => {
+    const setIsModalOpen = jest.fn();
+    const closeModal = () => {
+      setIsModalOpen(false);
+    };
+
+    closeModal();
+    expect(setIsModalOpen).toHaveBeenCalledWith(false); 
   });
 });

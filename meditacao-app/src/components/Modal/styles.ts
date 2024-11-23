@@ -81,22 +81,6 @@ export const MenuItem = styled.button`
   }
 `;
 
-export const CloseButton = styled.button`
-  position: absolute;
-  top: 15px;
-  right: 15px;
-  background: transparent;
-  border: none;
-  font-size: 24px;
-  color: #333;
-  cursor: pointer;
-  transition: color 0.3s ease;
-
-  &:hover {
-    color: #e74c3c;
-  }
-`;
-
 export const ActionButtonWrapper = styled.div`
   display: flex;
   justify-content: space-around;
