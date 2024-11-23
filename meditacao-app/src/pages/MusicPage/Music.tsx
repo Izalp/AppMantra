@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { getStorage, ref, getDownloadURL } from "firebase/storage";
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import musicaList from "../../components/AudiosMusica/Musicas";
-import { SettingsModal } from "../../components/Modal/Modal";
 
 import {
   PageContainer,
@@ -19,9 +18,6 @@ import {
   ProgressBarContainer,
   TimeDisplay,
   Logo,
-  SettingsButton,
-  NavBar,
-  IconWrapper,
   Title,
   Motivation,
   TimeDisplayContainer,
@@ -30,10 +26,9 @@ import logo from "../../assets/logo2.png";
 
 import { FaPlay, FaPause, FaForward, FaHome, FaMusic } from "react-icons/fa";
 import { GiYinYang } from "react-icons/gi";
-import { deleteUser, getAuth, signOut, updateEmail, updatePassword } from "firebase/auth";
 
 const MusicPage: React.FC = () => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isModalOpen] = useState(false);
   const [audioStates, setAudioStates] = useState<{
     [key: string]: {
       isPlaying: boolean;
@@ -43,9 +38,6 @@ const MusicPage: React.FC = () => {
     };
   }>({});
   const [imageUrls, setImageUrls] = useState<{ [key: string]: string }>({});
-  const [, setUserConfirmed] = useState<boolean>(false);
-  const navigate = useNavigate();
-  const auth = getAuth();
 
   useEffect(() => {
     const storage = getStorage();
@@ -179,80 +171,10 @@ const MusicPage: React.FC = () => {
     return `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
   };
 
-  function handleUpdate(
-    email: string,
-    password: string,
-    isConfirmed: boolean
-  ): void {
-    setUserConfirmed(isConfirmed);
-
-    if (isConfirmed && auth.currentUser) {
-      const promises = [];
-
-      if (email) {
-        promises.push(
-          updateEmail(auth.currentUser, email).catch((error) =>
-            console.error("Erro ao atualizar e-mail:", error)
-          )
-        );
-      }
-
-      if (password) {
-        promises.push(
-          updatePassword(auth.currentUser, password).catch((error) =>
-            console.error("Erro ao atualizar senha:", error)
-          )
-        );
-      }
-
-      Promise.all(promises)
-        .then(() => {
-          console.log("E-mail e/ou senha atualizados com sucesso.");
-          setIsModalOpen(false);
-        })
-        .catch((error) => {
-          console.error("Erro ao atualizar credenciais:", error);
-        });
-    } else {
-      console.error("Usuário não autenticado.");
-    }
-  }
-
-  function handleDeleteAccount(isConfirmed: boolean): void {
-    setUserConfirmed(isConfirmed);
-    if (isConfirmed && auth.currentUser) {
-      deleteUser(auth.currentUser)
-        .then(() => {
-          console.log("Conta excluída com sucesso.");
-          navigate("/");
-        })
-        .catch((error) => {
-          console.error("Erro ao excluir conta:", error);
-        });
-    } else {
-      console.log("Exclusão de conta cancelada.");
-    }
-  }
-
-  function handleLogout(): void {
-    signOut(auth)
-      .then(() => {
-        navigate("/");
-      })
-      .catch((error) => {
-        console.error("Erro ao fazer logout:", error);
-      });
-  }
-
   return (
     <PageContainer>
       <Header>
         <Logo src={logo} alt="Logo" />
-        <NavBar>
-          <SettingsButton onClick={() => setIsModalOpen(true)}>
-            <IconWrapper uk-icon="icon: cog; ratio:1.5" />
-          </SettingsButton>
-        </NavBar>
       </Header>
 
       <Title>Músicas e Sons Relaxantes</Title>
@@ -372,15 +294,6 @@ const MusicPage: React.FC = () => {
           </NavItem>
         </NavLink>
       </FooterNavBar>
-
-      {isModalOpen && (
-        <SettingsModal
-          closeModal={() => setIsModalOpen(false)}
-          onUpdate={handleUpdate}
-          onDeleteAccount={handleDeleteAccount}
-          onLogout={handleLogout}
-        />
-      )}
     </PageContainer>
   );
 };
