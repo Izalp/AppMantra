@@ -11,7 +11,7 @@ jest.mock("firebase/storage", () => ({
 }));
 
 // Mocking audio list
-jest.mock("../../components/AudiosMeditacao/Meditacoes", () => [
+jest.mock("../components/AudiosMeditacao/Meditacoes", () => [
   {
     id: "audio1",
     title: "Audio 1",
