@@ -1,9 +1,7 @@
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-import { act } from "react"; // Usando o 'act' diretamente de 'react'
-import { MemoryRouter } from "react-router-dom";
 import MeditationPage from "../pages/MeditationPage/Meditation";
 import { getDownloadURL } from "firebase/storage";
-import audioList from "../components/AudiosMeditacao/Meditacoes";
+import { MemoryRouter } from "react-router-dom"; // Mantemos o MemoryRouter
 
 // Mocking Firebase Storage's getDownloadURL function
 jest.mock("firebase/storage", () => ({
@@ -22,6 +20,9 @@ jest.mock("../components/AudiosMeditacao/Meditacoes", () => [
     imageFilePath: "path/to/image1",
   },
 ]);
+
+// Corrigido para importar 'act' de 'react' e não de 'react-dom/test-utils'
+import { act } from "react"; // A importação correta de 'act' de react
 
 describe("MeditationPage", () => {
   beforeEach(() => {
@@ -45,9 +46,7 @@ describe("MeditationPage", () => {
   it("plays an audio when play button is clicked", async () => {
     const playButton = screen.getByRole("button", { name: /play/i });
 
-    await act(async () => {
-      fireEvent.click(playButton);
-    });
+    fireEvent.click(playButton);
 
     await waitFor(() => {
       expect(getDownloadURL).toHaveBeenCalledTimes(1);
@@ -59,16 +58,10 @@ describe("MeditationPage", () => {
 
   it("pauses the audio when pause button is clicked", async () => {
     const playButton = screen.getByRole("button", { name: /play/i });
-
-    await act(async () => {
-      fireEvent.click(playButton); // Start playing audio
-    });
+    fireEvent.click(playButton); // Start playing audio
 
     const pauseButton = screen.getByRole("button", { name: /pause/i });
-
-    await act(async () => {
-      fireEvent.click(pauseButton); // Pause the audio
-    });
+    fireEvent.click(pauseButton); // Pause the audio
 
     await waitFor(() => {
       expect(screen.getByRole("button", { name: /play/i })).toBeInTheDocument(); // Play button should be visible again
@@ -77,16 +70,10 @@ describe("MeditationPage", () => {
 
   it("skips the audio when skip button is clicked", async () => {
     const playButton = screen.getByRole("button", { name: /play/i });
-
-    await act(async () => {
-      fireEvent.click(playButton); // Start playing audio
-    });
+    fireEvent.click(playButton); // Start playing audio
 
     const skipButton = screen.getByRole("button", { name: /forward/i });
-
-    await act(async () => {
-      fireEvent.click(skipButton); // Skip the audio
-    });
+    fireEvent.click(skipButton); // Skip the audio
 
     await waitFor(() => {
       expect(skipButton).toBeInTheDocument();
@@ -95,11 +82,8 @@ describe("MeditationPage", () => {
 
   it("opens the settings modal when the settings button is clicked", () => {
     const settingsButton = screen.getByRole("button", { name: /cog/i });
+    fireEvent.click(settingsButton);
 
-    act(() => {
-      fireEvent.click(settingsButton);
-    });
-
-    expect(screen.getByText("Atualizar Credenciais")).toBeInTheDocument();
+    expect(screen.getByText("Atualizar Credenciais")).toBeInTheDocument(); // Assuming the modal has this text
   });
 });
