@@ -68,7 +68,11 @@
   },
   "jest": {
     "collectCoverageFrom": [
-      "src/**/*.{js,jsx,ts,tsx}"
+      "src/**/*.{js,jsx,ts,tsx}",
+      "!src/components",
+      "!src/services",
+      "!src/styles",
+      "!src/firebase"
     ]
   }
 }
