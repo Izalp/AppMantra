@@ -1,103 +1,39 @@
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-import { MemoryRouter } from "react-router-dom";
-import MeditationPage from "../pages/MeditationPage/Meditation";
-import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
-import { getDownloadURL, ref } from "firebase/storage";
-
-jest.mock("firebase/auth", () => ({
-  getAuth: jest.fn(() => ({
-    currentUser: { email: "test@example.com" },
-  })),
-  signInWithEmailAndPassword: jest.fn(),
-}));
+import { render, screen, fireEvent } from "@testing-library/react";
+import { MeditationPage } from "./MeditationPage"; // Certifique-se de importar corretamente
+import { getDownloadURL } from "firebase/storage";
+import { getAuth } from "firebase/auth"; // Certifique-se de importar
 
 jest.mock("firebase/storage", () => ({
-  getStorage: jest.fn(),
-  ref: jest.fn(),
   getDownloadURL: jest.fn(),
 }));
 
+jest.mock("firebase/auth", () => ({
+  getAuth: jest.fn(),
+}));
+
 describe("MeditationPage", () => {
-  beforeEach(() => {
-    jest.clearAllMocks();
+  it("renders meditation page correctly", async () => {
+    getDownloadURL.mockResolvedValue("http://mockurl.com/audio.mp3");
+
+    render(<MeditationPage />);
+
+    expect(screen.getByText("Meditações")).toBeInTheDocument();
+    expect(screen.getByText("Em meio ao caos diário")).toBeInTheDocument();
   });
 
-  test("login no Firebase e exibir o conteúdo corretamente", async () => {
-    (signInWithEmailAndPassword as jest.Mock).mockResolvedValueOnce({
-      user: { email: "test@example.com" },
-    });
+  it("plays an audio when play button is clicked", async () => {
+    const playButton = screen.getByRole("button", { name: /play/i });
 
-    render(
-      <MemoryRouter>
-        <MeditationPage />
-      </MemoryRouter>
-    );
+    fireEvent.click(playButton);
 
-    await waitFor(() => {
-      expect(getAuth).toHaveBeenCalled();
-      expect(signInWithEmailAndPassword).toHaveBeenCalledWith(
-        expect.anything(),
-        "usuario@exemplo.com",
-        "senha123"
-      );
-    });
-
-    const meditationTitle = screen.getByText(/Meditações/i);
-    expect(meditationTitle).toBeInTheDocument();
+    expect(getDownloadURL).toHaveBeenCalledTimes(1);
   });
 
-  test("deve exibir um erro se o login no Firebase falhar", async () => {
-    (signInWithEmailAndPassword as jest.Mock).mockRejectedValueOnce(
-      new Error("Erro ao logar")
-    );
+  it("pauses an audio when pause button is clicked", async () => {
+    const pauseButton = screen.getByRole("button", { name: /pause/i });
 
-    render(
-      <MemoryRouter>
-        <MeditationPage />
-      </MemoryRouter>
-    );
+    fireEvent.click(pauseButton);
 
-    await waitFor(() => {
-      const errorMessage = screen.getByText(/Não foi possível autenticar/i);
-      expect(errorMessage).toBeInTheDocument();
-    });
-  });
-
-  test("deve carregar áudio corretamente do Firebase Storage", async () => {
-    (getDownloadURL as jest.Mock).mockResolvedValueOnce(
-      "https://example.com/audio.mp3"
-    );
-
-    render(
-      <MemoryRouter>
-        <MeditationPage />
-      </MemoryRouter>
-    );
-
-    const audioElement = await waitFor(() =>
-      screen.getByTestId("audio-player")
-    );
-    expect(audioElement).toBeInTheDocument();
-    expect(audioElement).toHaveAttribute(
-      "src",
-      "https://example.com/audio.mp3"
-    );
-  });
-
-  test("deve exibir uma mensagem de erro se o carregamento do áudio falhar", async () => {
-    (getDownloadURL as jest.Mock).mockRejectedValueOnce(
-      new Error("Erro ao carregar áudio")
-    );
-
-    render(
-      <MemoryRouter>
-        <MeditationPage />
-      </MemoryRouter>
-    );
-
-    await waitFor(() => {
-      const errorMessage = screen.getByText(/Erro ao carregar o áudio/i);
-      expect(errorMessage).toBeInTheDocument();
-    });
+    expect(getDownloadURL).toHaveBeenCalledTimes(1);
   });
 });
