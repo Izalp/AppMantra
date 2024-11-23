@@ -1,7 +1,6 @@
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import MeditationPage from "../pages/MeditationPage/Meditation";
 import { getDownloadURL } from "firebase/storage";
-import { MemoryRouter } from "react-router-dom"; // Mantemos o MemoryRouter
 
 // Mocking Firebase Storage's getDownloadURL function
 jest.mock("firebase/storage", () => ({
@@ -21,16 +20,11 @@ jest.mock("../components/AudiosMeditacao/Meditacoes", () => [
   },
 ]);
 
-// Corrigido para importar 'act' de 'react' e não de 'react-dom/test-utils'
-import { act } from "react"; // A importação correta de 'act' de react
+import { act } from "react"; // Importação correta do act
 
 describe("MeditationPage", () => {
   beforeEach(() => {
-    render(
-      <MemoryRouter>
-        <MeditationPage />
-      </MemoryRouter>
-    );
+    render(<MeditationPage />);
   });
 
   it("renders meditation page correctly", () => {
