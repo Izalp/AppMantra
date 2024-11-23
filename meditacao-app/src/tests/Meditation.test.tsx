@@ -22,7 +22,7 @@ describe("MeditationPage", () => {
     jest.clearAllMocks();
   });
 
-  test("deve fazer login no Firebase e exibir o conteúdo corretamente", async () => {
+  test("login no Firebase e exibir o conteúdo corretamente", async () => {
     (signInWithEmailAndPassword as jest.Mock).mockResolvedValueOnce({
       user: { email: "test@example.com" },
     });
