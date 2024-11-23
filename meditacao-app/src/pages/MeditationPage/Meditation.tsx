@@ -73,6 +73,22 @@ const MeditationPage: React.FC = () => {
     loadImages();
   }, []);
 
+  // Função para pausar o áudio
+  const pauseAudio = (audioFilePath: string) => {
+    const currentAudioState = audioStates[audioFilePath];
+
+    if (currentAudioState && currentAudioState.isPlaying) {
+      currentAudioState.audio?.pause();
+      setAudioStates((prevState) => ({
+        ...prevState,
+        [audioFilePath]: {
+          ...currentAudioState,
+          isPlaying: false,
+        },
+      }));
+    }
+  };
+
   // Função para reproduzir áudio
   const playAudio = async (audioFilePath: string) => {
     const currentAudioState = audioStates[audioFilePath];
@@ -154,7 +170,31 @@ const MeditationPage: React.FC = () => {
     }
   };
 
-  // Outras funções (pause, skip, formatTime, etc.)
+  // Função para avançar o áudio
+  const skipAudio = (audioFilePath: string) => {
+    const currentAudioState = audioStates[audioFilePath];
+    if (currentAudioState) {
+      const newTime = Math.min(
+        currentAudioState.currentTime + 30,
+        currentAudioState.duration
+      ); // Avançar 30 segundos
+      currentAudioState.audio?.currentTime = newTime;
+      setAudioStates((prevState) => ({
+        ...prevState,
+        [audioFilePath]: {
+          ...currentAudioState,
+          currentTime: newTime,
+        },
+      }));
+    }
+  };
+
+  // Função para formatar o tempo
+  const formatTime = (time: number) => {
+    const minutes = Math.floor(time / 60);
+    const seconds = Math.floor(time % 60);
+    return `${minutes}:${seconds < 10 ? `0${seconds}` : seconds}`;
+  };
 
   return (
     <PageContainer>
