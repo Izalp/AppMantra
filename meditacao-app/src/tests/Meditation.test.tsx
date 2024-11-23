@@ -1,10 +1,13 @@
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import MeditationPage from "../pages/MeditationPage/Meditation";
 import { getDownloadURL } from "firebase/storage";
-import audioList from "../components/AudiosMeditacao/Meditacoes";
+import audioList from "../../components/AudiosMeditacao/Meditacoes";
 
+// Mocking Firebase Storage's getDownloadURL function
 jest.mock("firebase/storage", () => ({
-  getDownloadURL: jest.fn(),
+  getDownloadURL: jest.fn(() =>
+    Promise.resolve("http://mockurl.com/audio.mp3")
+  ), // Mocked promise resolving with the mock URL
 }));
 
 // Mocking audio list
@@ -20,8 +23,6 @@ jest.mock("../../components/AudiosMeditacao/Meditacoes", () => [
 
 describe("MeditationPage", () => {
   beforeEach(() => {
-    // Mocking audio URL resolution
-    getDownloadURL.mockResolvedValue("http://mockurl.com/audio.mp3");
     render(<MeditationPage />);
   });
 
@@ -41,9 +42,7 @@ describe("MeditationPage", () => {
     fireEvent.click(playButton);
 
     await waitFor(() => {
-      // Ensuring the mock URL was fetched once
       expect(getDownloadURL).toHaveBeenCalledTimes(1);
-      // Checking if pause button appears
       expect(
         screen.getByRole("button", { name: /pause/i })
       ).toBeInTheDocument();
@@ -58,8 +57,7 @@ describe("MeditationPage", () => {
     fireEvent.click(pauseButton); // Pause the audio
 
     await waitFor(() => {
-      // Ensure play button is visible again after pause
-      expect(screen.getByRole("button", { name: /play/i })).toBeInTheDocument();
+      expect(screen.getByRole("button", { name: /play/i })).toBeInTheDocument(); // Play button should be visible again
     });
   });
 
@@ -68,9 +66,8 @@ describe("MeditationPage", () => {
     fireEvent.click(playButton); // Start playing audio
 
     const skipButton = screen.getByRole("button", { name: /forward/i });
-    fireEvent.click(skipButton); // Simulate skip button click
+    fireEvent.click(skipButton); // Skip the audio
 
-    // You may want to mock the currentTime behavior or simply check if the skip button is still present
     await waitFor(() => {
       expect(skipButton).toBeInTheDocument();
     });
@@ -80,6 +77,6 @@ describe("MeditationPage", () => {
     const settingsButton = screen.getByRole("button", { name: /cog/i });
     fireEvent.click(settingsButton);
 
-    expect(screen.getByText("Atualizar Credenciais")).toBeInTheDocument(); // Assuming modal text is "Atualizar Credenciais"
+    expect(screen.getByText("Atualizar Credenciais")).toBeInTheDocument(); // Assuming the modal has this text
   });
 });
