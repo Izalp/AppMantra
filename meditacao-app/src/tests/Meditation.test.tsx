@@ -24,7 +24,10 @@ import { act } from "react"; // Importação correta do act
 
 describe("MeditationPage", () => {
   beforeEach(() => {
-    render(<MeditationPage />);
+    // Utilizando `act` para garantir que a renderização é processada de forma assíncrona
+    act(() => {
+      render(<MeditationPage />);
+    });
   });
 
   it("renders meditation page correctly", () => {
@@ -40,7 +43,10 @@ describe("MeditationPage", () => {
   it("plays an audio when play button is clicked", async () => {
     const playButton = screen.getByRole("button", { name: /play/i });
 
-    fireEvent.click(playButton);
+    // Envolvendo o evento de clique em `act`
+    await act(async () => {
+      fireEvent.click(playButton);
+    });
 
     await waitFor(() => {
       expect(getDownloadURL).toHaveBeenCalledTimes(1);
@@ -52,10 +58,14 @@ describe("MeditationPage", () => {
 
   it("pauses the audio when pause button is clicked", async () => {
     const playButton = screen.getByRole("button", { name: /play/i });
-    fireEvent.click(playButton); // Start playing audio
+    await act(async () => {
+      fireEvent.click(playButton); // Start playing audio
+    });
 
     const pauseButton = screen.getByRole("button", { name: /pause/i });
-    fireEvent.click(pauseButton); // Pause the audio
+    await act(async () => {
+      fireEvent.click(pauseButton); // Pause the audio
+    });
 
     await waitFor(() => {
       expect(screen.getByRole("button", { name: /play/i })).toBeInTheDocument(); // Play button should be visible again
@@ -64,10 +74,14 @@ describe("MeditationPage", () => {
 
   it("skips the audio when skip button is clicked", async () => {
     const playButton = screen.getByRole("button", { name: /play/i });
-    fireEvent.click(playButton); // Start playing audio
+    await act(async () => {
+      fireEvent.click(playButton); // Start playing audio
+    });
 
     const skipButton = screen.getByRole("button", { name: /forward/i });
-    fireEvent.click(skipButton); // Skip the audio
+    await act(async () => {
+      fireEvent.click(skipButton); // Skip the audio
+    });
 
     await waitFor(() => {
       expect(skipButton).toBeInTheDocument();
