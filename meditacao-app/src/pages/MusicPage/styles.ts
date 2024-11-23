@@ -25,24 +25,6 @@ export const Logo = styled.img`
   height: 80px;
 `;
 
-export const NavBar = styled.nav`
-  display: flex;
-  align-items: center;
-`;
-
-export const IconWrapper = styled.i`
-  font-size: 1.5rem;
-  color: #34495e;
-`;
-
-export const SettingsButton = styled.button`
-  background: none;
-  border: none;
-  cursor: pointer;
-  position: relative;
-  left: -30px;
-`;
-
 export const Title = styled.h1`
   font-size: 2.5rem;
   color: #2c3e50;
