@@ -1,4 +1,4 @@
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import { render, screen, fireEvent, waitFor, act } from "@testing-library/react";
 import MeditationPage from "../pages/MeditationPage/Meditation";
 import { getDownloadURL } from "firebase/storage";
 
@@ -38,7 +38,10 @@ describe("MeditationPage", () => {
   it("plays an audio when play button is clicked", async () => {
     const playButton = screen.getByRole("button", { name: /play/i });
 
-    fireEvent.click(playButton);
+    // Usando 'act' para envolver a interação assíncrona
+    await act(async () => {
+      fireEvent.click(playButton); // Simula o clique no botão de play
+    });
 
     await waitFor(() => {
       expect(getDownloadURL).toHaveBeenCalledTimes(1);
@@ -50,22 +53,38 @@ describe("MeditationPage", () => {
 
   it("pauses the audio when pause button is clicked", async () => {
     const playButton = screen.getByRole("button", { name: /play/i });
-    fireEvent.click(playButton); // Start playing audio
+
+    // Usando 'act' para envolver a interação assíncrona
+    await act(async () => {
+      fireEvent.click(playButton); // Começa a reprodução do áudio
+    });
 
     const pauseButton = screen.getByRole("button", { name: /pause/i });
-    fireEvent.click(pauseButton); // Pause the audio
+
+    // Usando 'act' para envolver a interação assíncrona ao clicar no botão de pause
+    await act(async () => {
+      fireEvent.click(pauseButton); // Pausa o áudio
+    });
 
     await waitFor(() => {
-      expect(screen.getByRole("button", { name: /play/i })).toBeInTheDocument(); // Play button should be visible again
+      expect(screen.getByRole("button", { name: /play/i })).toBeInTheDocument(); // O botão play deve reaparecer
     });
   });
 
   it("skips the audio when skip button is clicked", async () => {
     const playButton = screen.getByRole("button", { name: /play/i });
-    fireEvent.click(playButton); // Start playing audio
+
+    // Usando 'act' para envolver a interação assíncrona
+    await act(async () => {
+      fireEvent.click(playButton); // Começa a reprodução do áudio
+    });
 
     const skipButton = screen.getByRole("button", { name: /forward/i });
-    fireEvent.click(skipButton); // Skip the audio
+
+    // Usando 'act' para envolver a interação assíncrona ao clicar no botão de skip
+    await act(async () => {
+      fireEvent.click(skipButton); // Avança o áudio
+    });
 
     await waitFor(() => {
       expect(skipButton).toBeInTheDocument();
@@ -74,7 +93,11 @@ describe("MeditationPage", () => {
 
   it("opens the settings modal when the settings button is clicked", () => {
     const settingsButton = screen.getByRole("button", { name: /cog/i });
-    fireEvent.click(settingsButton);
+
+    // Usando 'act' para envolver a interação assíncrona ao clicar no botão de configurações
+    act(() => {
+      fireEvent.click(settingsButton);
+    });
 
     expect(screen.getByText("Atualizar Credenciais")).toBeInTheDocument(); // Assuming the modal has this text
   });
