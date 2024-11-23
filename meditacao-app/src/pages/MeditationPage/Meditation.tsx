@@ -48,6 +48,7 @@ const MeditationPage: React.FC = () => {
   const navigate = useNavigate();
   const auth = getAuth();
 
+
   useEffect(() => {
     const storage = getStorage();
     const loadImages = async () => {
@@ -59,7 +60,10 @@ const MeditationPage: React.FC = () => {
           const url = await getDownloadURL(imageRef);
           urls[audioItem.id] = url;
         } catch (error) {
-          console.error(`Erro ao carregar a imagem para ${audioItem.id}:`, error);
+          console.error(
+            `Erro ao carregar a imagem para ${audioItem.id}:`,
+            error
+          );
         }
       }
 
@@ -100,7 +104,9 @@ const MeditationPage: React.FC = () => {
         const url = await getDownloadURL(audioRef);
         const newAudio = new Audio(url);
 
-        newAudio.currentTime = currentAudioState ? currentAudioState.currentTime : 0;
+        newAudio.currentTime = currentAudioState
+          ? currentAudioState.currentTime
+          : 0;
 
         newAudio.play().catch((error) => {
           console.error("Erro ao reproduzir o áudio:", error);
@@ -177,10 +183,10 @@ const MeditationPage: React.FC = () => {
 
   function handleUpdate(email: string, password: string, isConfirmed: boolean): void {
     setUserConfirmed(isConfirmed);
-
+  
     if (isConfirmed && auth.currentUser) {
       const promises = [];
-
+  
       if (email) {
         promises.push(
           updateEmail(auth.currentUser, email).catch((error) =>
@@ -188,7 +194,7 @@ const MeditationPage: React.FC = () => {
           )
         );
       }
-
+  
       if (password) {
         promises.push(
           updatePassword(auth.currentUser, password).catch((error) =>
@@ -196,7 +202,7 @@ const MeditationPage: React.FC = () => {
           )
         );
       }
-
+  
       Promise.all(promises)
         .then(() => {
           console.log("E-mail e/ou senha atualizados com sucesso.");
@@ -209,7 +215,7 @@ const MeditationPage: React.FC = () => {
       console.error("Usuário não autenticado.");
     }
   }
-
+  
   function handleDeleteAccount(isConfirmed: boolean): void {
     setUserConfirmed(isConfirmed);
     if (isConfirmed && auth.currentUser) {
@@ -250,11 +256,23 @@ const MeditationPage: React.FC = () => {
       <Title>Meditações</Title>
 
       <Motivation>
-        <p>Em meio ao caos diário, é fácil se perder em pensamentos acelerados e preocupações.</p>
-        <p>A meditação oferece uma pausa, onde você pode se reconectar com sua essência.</p>
-        <p>Experimente nossos áudios e relaxe em sessões criadas para ajudar você a alcançar um estado de paz e clareza.</p>
-        <p>Não importa onde você esteja na sua jornada, a meditação está sempre aqui para guiá-lo de volta ao momento presente.</p>
-        <p>Respire fundo e comece sua prática agora.</p>
+        <p>
+          Em meio ao caos diário, é fácil se perder em pensamentos acelerados e
+          preocupações.
+        </p>
+        <p>
+          A meditação oferece uma pausa, onde você pode se reconectar com sua
+          essência.
+        </p>
+        <p>
+          Experimente nossos áudios e relaxe em sessões criadas para ajudar você
+          a alcançar um estado de paz e clareza.
+        </p>
+        <p>
+          Não importa onde você esteja na sua jornada, a meditação está sempre
+          aqui para guiá-lo de volta ao momento presente.
+        </p>
+        <p>Respire fundo e comece sua praticando agora</p>
       </Motivation>
 
       <AudioGrid>
@@ -269,68 +287,98 @@ const MeditationPage: React.FC = () => {
               </AudioInfo>
               {currentAudioState?.isPlaying ? (
                 <div style={{ display: "flex", justifyContent: "center" }}>
-                  <ControlButton onClick={() => pauseAudio(audioItem.audioFilePath)} className="pause">
+                  <ControlButton
+                    onClick={() => pauseAudio(audioItem.audioFilePath)}
+                    className="pause"
+                  >
                     <FaPause size={24} />
                   </ControlButton>
-                  <ControlButton onClick={() => skipAudio(audioItem.audioFilePath)} className="skip" style={{ marginLeft: "10px" }}>
+                  <ControlButton
+                    onClick={() => skipAudio(audioItem.audioFilePath)}
+                    className="skip"
+                    style={{ marginLeft: "10px" }}
+                  >
                     <FaForward size={24} />
                   </ControlButton>
                 </div>
               ) : (
-                <ControlButton onClick={() => playAudio(audioItem.audioFilePath)} className="play">
+                <ControlButton
+                  onClick={() => playAudio(audioItem.audioFilePath)}
+                  className="play"
+                >
                   <FaPlay size={24} />
                 </ControlButton>
               )}
+
               <ProgressBarContainer>
                 <ProgressBar
-                  value={currentAudioState ? (currentAudioState.currentTime / currentAudioState.duration) * 100 : 0}
-                  max="100"
+                  width={
+                    ((currentAudioState?.currentTime || 0) /
+                      (currentAudioState?.duration || 1)) *
+                    100
+                  }
                 />
-                <TimeDisplayContainer>
-                  <TimeDisplay>
-                    {currentAudioState ? formatTime(currentAudioState.currentTime) : "00:00"}
-                  </TimeDisplay>
-                  <TimeDisplay>
-                    {currentAudioState ? formatTime(currentAudioState.duration) : "00:00"}
-                  </TimeDisplay>
-                </TimeDisplayContainer>
               </ProgressBarContainer>
+
+              <TimeDisplayContainer>
+                <TimeDisplay>
+                  {formatTime(currentAudioState?.currentTime || 0)}
+                </TimeDisplay>
+                <TimeDisplay>
+                  {formatTime(currentAudioState?.duration || 0)}
+                </TimeDisplay>
+              </TimeDisplayContainer>
             </AudioCard>
           );
         })}
       </AudioGrid>
 
-      <FooterNavBar>
-        <NavItem>
-          <NavLink to="/">
+      <FooterNavBar modalOpen={isModalOpen}>
+        <NavLink
+          to="/home"
+          className={({ isActive }) => (isActive ? "active" : "")}
+        >
+          <NavItem>
             <NavIcon>
-              <FaHome size={24} />
+              <FaHome />
             </NavIcon>
-          </NavLink>
-        </NavItem>
-        <NavItem>
-          <NavLink to="/music">
+            <span>Home</span>
+          </NavItem>
+        </NavLink>
+
+        <NavLink
+          to="/meditacoes"
+          className={({ isActive }) => (isActive ? "active" : "")}
+        >
+          <NavItem>
             <NavIcon>
-              <FaMusic size={24} />
+              <GiYinYang />
             </NavIcon>
-          </NavLink>
-        </NavItem>
-        <NavItem>
-          <NavLink to="/meditation">
+            <span>Meditação</span>
+          </NavItem>
+        </NavLink>
+
+        <NavLink
+          to="/musicas"
+          className={({ isActive }) => (isActive ? "active" : "")}
+        >
+          <NavItem>
             <NavIcon>
-              <GiYinYang size={24} />
+              <FaMusic />
             </NavIcon>
-          </NavLink>
-        </NavItem>
+            <span>Música</span>
+          </NavItem>
+        </NavLink>
       </FooterNavBar>
 
-      <SettingsModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        onUpdate={handleUpdate}
-        onDeleteAccount={handleDeleteAccount}
-        onLogout={handleLogout}
-      />
+      {isModalOpen && (
+        <SettingsModal
+          closeModal={() => setIsModalOpen(false)}
+          onUpdate={handleUpdate}
+          onDeleteAccount={handleDeleteAccount}
+          onLogout={handleLogout}
+        />
+      )}
     </PageContainer>
   );
 };
