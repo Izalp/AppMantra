@@ -6,7 +6,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test --collect-coverage",
+    "test": "react-scripts test --collect-coverage --watchAll=false",
     "eject": "react-scripts eject",
     "coverage": "npm run test -- --coverage"
   },
@@ -68,7 +68,15 @@
   },
   "jest": {
     "collectCoverageFrom": [
-      "src/tests/**/*.{js,jsx,ts,tsx}"
+      "src/**/*.{js,jsx,ts,tsx}",
+      "!src/components/**/*",          
+      "!src/services/**/*",            
+      "!src/styles/**/*",            
+      "!src/firebase/**/*",
+      "!src/reportWebVitals.ts",
+      "!src/index.tsx",
+      "!src/App.tsx",
+      "!src/react-app-env.d.ts"
     ]
   }
 }
