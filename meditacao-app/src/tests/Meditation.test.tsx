@@ -1,7 +1,7 @@
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import MeditationPage from "../pages/MeditationPage/Meditation";
 import { getDownloadURL } from "firebase/storage";
-import audioList from "../../components/AudiosMeditacao/Meditacoes";
+import audioList from "../components/AudiosMeditacao/Meditacoes";
 
 // Mocking Firebase Storage's getDownloadURL function
 jest.mock("firebase/storage", () => ({
