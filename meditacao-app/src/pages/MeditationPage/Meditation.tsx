@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { getStorage, ref, getDownloadURL } from "firebase/storage";
 import audioList from "../../components/AudiosMeditacao/Meditacoes";
-import { SettingsModal } from "../../components/Modal/Modal";
 
 import {
   PageContainer,
@@ -18,9 +17,6 @@ import {
   ProgressBarContainer,
   TimeDisplay,
   Logo,
-  SettingsButton,
-  NavBar,
-  IconWrapper,
   Title,
   Motivation,
   TimeDisplayContainer,
@@ -30,11 +26,10 @@ import logo from "../../assets/logo2.png";
 
 import { FaPlay, FaPause, FaForward, FaHome, FaMusic } from "react-icons/fa";
 import { GiYinYang } from "react-icons/gi";
-import { NavLink, useNavigate } from "react-router-dom";
-import { deleteUser, getAuth, signOut, updateEmail, updatePassword } from "firebase/auth";
+import { NavLink,} from "react-router-dom";
 
 const MeditationPage: React.FC = () => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isModalOpen, ] = useState(false);
   const [audioStates, setAudioStates] = useState<{
     [key: string]: {
       isPlaying: boolean;
@@ -44,10 +39,6 @@ const MeditationPage: React.FC = () => {
     };
   }>({});
   const [imageUrls, setImageUrls] = useState<{ [key: string]: string }>({});
-  const [, setUserConfirmed] = useState<boolean>(false);
-  const navigate = useNavigate();
-  const auth = getAuth();
-
 
   useEffect(() => {
     const storage = getStorage();
@@ -181,76 +172,10 @@ const MeditationPage: React.FC = () => {
     return `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
   };
 
-  function handleUpdate(email: string, password: string, isConfirmed: boolean): void {
-    setUserConfirmed(isConfirmed);
-  
-    if (isConfirmed && auth.currentUser) {
-      const promises = [];
-  
-      if (email) {
-        promises.push(
-          updateEmail(auth.currentUser, email).catch((error) =>
-            console.error("Erro ao atualizar e-mail:", error)
-          )
-        );
-      }
-  
-      if (password) {
-        promises.push(
-          updatePassword(auth.currentUser, password).catch((error) =>
-            console.error("Erro ao atualizar senha:", error)
-          )
-        );
-      }
-  
-      Promise.all(promises)
-        .then(() => {
-          console.log("E-mail e/ou senha atualizados com sucesso.");
-          setIsModalOpen(false);
-        })
-        .catch((error) => {
-          console.error("Erro ao atualizar credenciais:", error);
-        });
-    } else {
-      console.error("Usuário não autenticado.");
-    }
-  }
-  
-  function handleDeleteAccount(isConfirmed: boolean): void {
-    setUserConfirmed(isConfirmed);
-    if (isConfirmed && auth.currentUser) {
-      deleteUser(auth.currentUser)
-        .then(() => {
-          console.log("Conta excluída com sucesso.");
-          navigate("/"); 
-        })
-        .catch((error) => {
-          console.error("Erro ao excluir conta:", error);
-        });
-    } else {
-      console.log("Exclusão de conta cancelada.");
-    }
-  }
-
-  function handleLogout(): void {
-    signOut(auth)
-      .then(() => {
-        navigate("/");
-      })
-      .catch((error) => {
-        console.error("Erro ao fazer logout:", error);
-      });
-  }
-
   return (
     <PageContainer>
       <Header>
         <Logo src={logo} alt="Logo" />
-        <NavBar>
-          <SettingsButton onClick={() => setIsModalOpen(true)}>
-            <IconWrapper uk-icon="icon: cog; ratio:1.5" />
-          </SettingsButton>
-        </NavBar>
       </Header>
 
       <Title>Meditações</Title>
@@ -290,12 +215,14 @@ const MeditationPage: React.FC = () => {
                   <ControlButton
                     onClick={() => pauseAudio(audioItem.audioFilePath)}
                     className="pause"
+                    aria-label="pause"
                   >
                     <FaPause size={24} />
                   </ControlButton>
                   <ControlButton
                     onClick={() => skipAudio(audioItem.audioFilePath)}
                     className="skip"
+                    aria-label="skip"
                     style={{ marginLeft: "10px" }}
                   >
                     <FaForward size={24} />
@@ -305,6 +232,7 @@ const MeditationPage: React.FC = () => {
                 <ControlButton
                   onClick={() => playAudio(audioItem.audioFilePath)}
                   className="play"
+                  aria-label="play"
                 >
                   <FaPlay size={24} />
                 </ControlButton>
@@ -328,6 +256,9 @@ const MeditationPage: React.FC = () => {
                   {formatTime(currentAudioState?.duration || 0)}
                 </TimeDisplay>
               </TimeDisplayContainer>
+
+              <audio data-testid={`audio-${audioItem.id}`} src={audioStates[audioItem.audioFilePath]?.audio?.src} />
+
             </AudioCard>
           );
         })}
@@ -370,15 +301,6 @@ const MeditationPage: React.FC = () => {
           </NavItem>
         </NavLink>
       </FooterNavBar>
-
-      {isModalOpen && (
-        <SettingsModal
-          closeModal={() => setIsModalOpen(false)}
-          onUpdate={handleUpdate}
-          onDeleteAccount={handleDeleteAccount}
-          onLogout={handleLogout}
-        />
-      )}
     </PageContainer>
   );
 };
