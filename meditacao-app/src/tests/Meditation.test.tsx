@@ -20,6 +20,7 @@ jest.mock("../../components/AudiosMeditacao/Meditacoes", () => [
 
 describe("MeditationPage", () => {
   beforeEach(() => {
+    // Mocking audio URL resolution
     getDownloadURL.mockResolvedValue("http://mockurl.com/audio.mp3");
     render(<MeditationPage />);
   });
@@ -40,8 +41,9 @@ describe("MeditationPage", () => {
     fireEvent.click(playButton);
 
     await waitFor(() => {
+      // Ensuring the mock URL was fetched once
       expect(getDownloadURL).toHaveBeenCalledTimes(1);
-      // Ensure that the audio is playing (can be mocked with an event handler)
+      // Checking if pause button appears
       expect(
         screen.getByRole("button", { name: /pause/i })
       ).toBeInTheDocument();
@@ -56,7 +58,8 @@ describe("MeditationPage", () => {
     fireEvent.click(pauseButton); // Pause the audio
 
     await waitFor(() => {
-      expect(screen.getByRole("button", { name: /play/i })).toBeInTheDocument(); // Play button should be visible again
+      // Ensure play button is visible again after pause
+      expect(screen.getByRole("button", { name: /play/i })).toBeInTheDocument();
     });
   });
 
@@ -65,10 +68,10 @@ describe("MeditationPage", () => {
     fireEvent.click(playButton); // Start playing audio
 
     const skipButton = screen.getByRole("button", { name: /forward/i });
-    fireEvent.click(skipButton); // Skip the audio
+    fireEvent.click(skipButton); // Simulate skip button click
 
+    // You may want to mock the currentTime behavior or simply check if the skip button is still present
     await waitFor(() => {
-      // Here you can test the change in currentTime (it could be mocked as well)
       expect(skipButton).toBeInTheDocument();
     });
   });
@@ -77,6 +80,6 @@ describe("MeditationPage", () => {
     const settingsButton = screen.getByRole("button", { name: /cog/i });
     fireEvent.click(settingsButton);
 
-    expect(screen.getByText("Atualizar Credenciais")).toBeInTheDocument(); // Assuming the modal has this text
+    expect(screen.getByText("Atualizar Credenciais")).toBeInTheDocument(); // Assuming modal text is "Atualizar Credenciais"
   });
 });
