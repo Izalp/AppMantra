@@ -1,6 +1,6 @@
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-import { act } from "react"; // Atualize a importação de 'act' para de 'react'
-import { MemoryRouter } from "react-router-dom"; // Importação do MemoryRouter
+import { act } from "react"; // Usando o 'act' diretamente de 'react'
+import { MemoryRouter } from "react-router-dom";
 import MeditationPage from "../pages/MeditationPage/Meditation";
 import { getDownloadURL } from "firebase/storage";
 import audioList from "../components/AudiosMeditacao/Meditacoes";
@@ -45,7 +45,6 @@ describe("MeditationPage", () => {
   it("plays an audio when play button is clicked", async () => {
     const playButton = screen.getByRole("button", { name: /play/i });
 
-    // Usando o `act` para envolver ações assíncronas
     await act(async () => {
       fireEvent.click(playButton);
     });
@@ -61,14 +60,12 @@ describe("MeditationPage", () => {
   it("pauses the audio when pause button is clicked", async () => {
     const playButton = screen.getByRole("button", { name: /play/i });
 
-    // Usando o `act` para envolver ações assíncronas
     await act(async () => {
       fireEvent.click(playButton); // Start playing audio
     });
 
     const pauseButton = screen.getByRole("button", { name: /pause/i });
 
-    // Usando o `act` para envolver ações assíncronas
     await act(async () => {
       fireEvent.click(pauseButton); // Pause the audio
     });
@@ -81,14 +78,12 @@ describe("MeditationPage", () => {
   it("skips the audio when skip button is clicked", async () => {
     const playButton = screen.getByRole("button", { name: /play/i });
 
-    // Usando o `act` para envolver ações assíncronas
     await act(async () => {
       fireEvent.click(playButton); // Start playing audio
     });
 
     const skipButton = screen.getByRole("button", { name: /forward/i });
 
-    // Usando o `act` para envolver ações assíncronas
     await act(async () => {
       fireEvent.click(skipButton); // Skip the audio
     });
@@ -101,11 +96,10 @@ describe("MeditationPage", () => {
   it("opens the settings modal when the settings button is clicked", () => {
     const settingsButton = screen.getByRole("button", { name: /cog/i });
 
-    // Usando o `act` para envolver ações assíncronas
     act(() => {
       fireEvent.click(settingsButton);
     });
 
-    expect(screen.getByText("Atualizar Credenciais")).toBeInTheDocument(); // Assuming the modal has this text
+    expect(screen.getByText("Atualizar Credenciais")).toBeInTheDocument();
   });
 });
