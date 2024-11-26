@@ -43,11 +43,11 @@ jobs:
         working-directory: meditacao-app
 
       - name: Run unit tests
-        run: npm run test
+        run: npm run test -- --verbose 
         working-directory: meditacao-app
 
       - name: Generate test coverage report
-        run: npm run coverage
+        run: npm run coverage 
         working-directory: meditacao-app
 
       - name: Upload test results

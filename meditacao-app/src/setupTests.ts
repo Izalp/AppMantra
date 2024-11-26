@@ -23,4 +23,5 @@ if (typeof TextDecoder === 'undefined') {
     });
   }
   
+  global.setImmediate = global.setImmediate || ((fn: (...args: any[]) => void, ...args: any) => setTimeout(fn, 0, ...args));
   global.clearImmediate = global.clearImmediate || (() => {});
