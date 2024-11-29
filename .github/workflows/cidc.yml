@@ -43,7 +43,7 @@ jobs:
         working-directory: meditacao-app
 
       - name: Run unit tests
-        run: npm run test -- --coverage
+        run: npm run test 
         working-directory: meditacao-app
 
       - name: Upload test results
