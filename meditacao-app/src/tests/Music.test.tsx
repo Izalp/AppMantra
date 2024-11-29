@@ -1,6 +1,6 @@
 
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";import MusicPage from "../pages/MusicPage/Music";
-import { getStorage, ref, getDownloadURL } from "firebase/storage";
+import { getDownloadURL } from "firebase/storage";
 import { MemoryRouter } from "react-router-dom";
 
 jest.mock('firebase/app', () => ({
@@ -81,74 +81,21 @@ describe("MusicPage", () => {
     });
   });
 
-  /*/
   test("deve tocar o áudio quando o botão de play for clicado", async () => {
     render(
-        <MemoryRouter>
-          <MusicPage />
-        </MemoryRouter>
+      <MemoryRouter>
+        <MusicPage />
+      </MemoryRouter>
     );
 
-    
     const playButton = screen.getAllByRole("button")[0];
     expect(playButton).toBeInTheDocument();
-
     fireEvent.click(playButton);
 
     await waitFor(() => {
-      expect(getDownloadURL).toHaveBeenCalledTimes(1);
+      expect(getDownloadURL).toHaveBeenCalledTimes(3);
     });
   });
-
-  test("deve pausar o áudio quando o botão de pausa for clicado", async () => {
-    render(
-        <MemoryRouter>
-          <MusicPage />
-        </MemoryRouter>
-    );
-
-    const playButton = screen.getAllByRole("button")[0];
-    fireEvent.click(playButton);
-
-    const pauseButton = screen.getByRole("button", { name: /pause/i });
-    expect(pauseButton).toBeInTheDocument();
-
-    fireEvent.click(pauseButton);
-
-    await waitFor(() => {
-      expect(getDownloadURL).toHaveBeenCalledTimes(1); 
-    });
-  });
-
-  test("deve avançar o áudio quando o botão de skip for clicado", async () => {
-    render(
-        <MemoryRouter>
-          <MusicPage />
-        </MemoryRouter>
-    );
-
-    const playButton = screen.getAllByRole("button")[0];
-    fireEvent.click(playButton);
-
-    const skipButton = screen.getByRole("button", { name: /skip/i });
-    fireEvent.click(skipButton);
-
-    await waitFor(() => {
-      expect(screen.getByText(/10:00/)).toBeInTheDocument(); 
-    });
-  });
-
-  test("deve formatar o tempo corretamente", () => {
-    const { container } = render(
-        <MemoryRouter>
-          <MusicPage />
-        </MemoryRouter>
-    );
-
-    const formattedTime = container.querySelector(".time-display");
-    expect(formattedTime).toHaveTextContent("00:00");
-  });
-  /*/
 
   test("deve exibir corretamente os controles de navegação", () => {
     render(
