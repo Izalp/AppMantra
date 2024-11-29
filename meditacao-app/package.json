@@ -6,8 +6,9 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test --coverage --watchAll=false",
-    "eject": "react-scripts eject"
+    "test": "react-scripts test --collect-coverage --watchAll=false",
+    "eject": "react-scripts eject",
+    "coverage": "npm run test -- --coverage"
   },
   "dependencies": {
     "@fortawesome/free-solid-svg-icons": "^6.6.0",
