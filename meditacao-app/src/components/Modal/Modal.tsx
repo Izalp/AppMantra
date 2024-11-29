@@ -1,10 +1,9 @@
 import React, { useState } from "react";
-import { FaTimes, FaUserEdit, FaTrashAlt, FaSignOutAlt } from "react-icons/fa"; 
+import { FaUserEdit, FaTrashAlt, FaSignOutAlt } from "react-icons/fa"; 
 import { 
   ModalOverlay, 
   ModalContainer, 
   ModalContent, 
-  CloseButton, 
   MenuItem, 
   Title, 
   ActionButtonWrapper,
@@ -61,16 +60,19 @@ export const SettingsModal: React.FC<ModalProps> = ({
             <h2>Configurações</h2>
             <Title>Escolha uma opção para gerenciar sua conta:</Title>
             <div className="menu">
-              <MenuItem onClick={handleUpdateClick}>
+              <MenuItem role="button" onClick={handleUpdateClick}>
                 <FaUserEdit style={{ marginRight: "10px" }} /> Atualizar Cadastro
               </MenuItem>
-              <MenuItem onClick={handleDeleteConfirmation}>
+              <MenuItem role="button" onClick={handleDeleteConfirmation}>
                 <FaTrashAlt style={{ marginRight: "10px" }} /> Excluir Conta
               </MenuItem>
-              <MenuItem onClick={onLogout}>
+              <MenuItem role="button" onClick={onLogout}>
                 <FaSignOutAlt style={{ marginRight: "10px" }} /> Logout
               </MenuItem>
             </div>
+            <ActionButtonWrapper>
+              <ActionButton onClick={closeModal}>Fechar menu</ActionButton> 
+            </ActionButtonWrapper>
           </>
         );
       case "confirmDelete":
@@ -119,7 +121,7 @@ export const SettingsModal: React.FC<ModalProps> = ({
             </div>
             <ActionButtonWrapper>
               <ActionButton onClick={handleUpdate}>Atualizar</ActionButton>
-              <ActionButton onClick={() => setCurrentStep("menu")}>Voltar ao menu</ActionButton>
+              <ActionButton onClick={() => setCurrentStep("menu")}>Voltar</ActionButton>
             </ActionButtonWrapper>
           </>
        );
@@ -132,9 +134,6 @@ export const SettingsModal: React.FC<ModalProps> = ({
     <ModalOverlay>
       <ModalContainer>
         <ModalContent>
-          <CloseButton onClick={closeModal}>
-            <FaTimes />
-          </CloseButton>
           {renderContent()}
         </ModalContent>
       </ModalContainer>

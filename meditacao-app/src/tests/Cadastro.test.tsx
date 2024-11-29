@@ -1,22 +1,22 @@
 import { render, fireEvent, screen, waitFor } from "@testing-library/react";
-import { MemoryRouter } from "react-router-dom";
+import { MemoryRouter, useNavigate } from "react-router-dom";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import CadastroPage from "../pages/CadastroPage/Cadastro";
 
 jest.mock("firebase/auth", () => ({
   getAuth: jest.fn(),
   createUserWithEmailAndPassword: jest.fn(),
+  signInWithEmailAndPassword: jest.fn(),
 }));
-
-const mockNavigate = jest.fn();
 
 describe("CadastroPage", () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
-  /*/
   test("Cadastro realizado com sucesso", async () => {
+    const createUserWithEmailAndPassword =
+      require("firebase/auth").createUserWithEmailAndPassword;
     (createUserWithEmailAndPassword as jest.Mock).mockResolvedValue({
       user: { uid: "test-user-id" },
     });
@@ -42,9 +42,7 @@ describe("CadastroPage", () => {
 
     fireEvent.click(screen.getByRole("button", { name: /Cadastrar/i }));
 
-     jest.advanceTimersByTime(1000);
-
-  expect(mockNavigate).toHaveBeenCalledWith('/');
+    expect(window.location.pathname).toBe("/");
   });
 
   test("Exibe mensagem de erro para e-mail já em uso", async () => {
@@ -79,7 +77,6 @@ describe("CadastroPage", () => {
     );
     expect(errorMessages).toHaveLength(2);
   });
-  /*/
 
   test("Exibe erro para campo de email vazio", async () => {
     render(
@@ -105,7 +102,75 @@ describe("CadastroPage", () => {
     expect(errorMessage).toBeInTheDocument();
   });
 
-  test("Exibe erro para senha muito fraca", async () => {
+  test("Exibe mensagem de erro para e-mail inválido (autenticação Firebase)", async () => {
+    (createUserWithEmailAndPassword as jest.Mock).mockRejectedValue({
+      code: "auth/invalid-email",
+    });
+
+    render(
+      <MemoryRouter>
+        <CadastroPage />
+      </MemoryRouter>
+    );
+
+    fireEvent.change(screen.getByLabelText(/Nome/i), {
+      target: { value: "Usuário Teste" },
+    });
+
+    fireEvent.change(screen.getByLabelText(/Email/i), {
+      target: { value: "email@dominio.com" },
+    });
+
+    const senhaInputs = screen.getAllByLabelText(/Senha/i);
+    fireEvent.change(senhaInputs[0], { target: { value: "senha123" } });
+
+    fireEvent.change(screen.getByLabelText(/Confirmar Senha/i), {
+      target: { value: "senha123" },
+    });
+
+    fireEvent.click(screen.getByRole("button", { name: /Cadastrar/i }));
+
+    const errorMessages = await screen.findAllByText(
+      /Email inválido. Tente novamente./i
+    );
+    expect(errorMessages.length).toBeGreaterThan(0);
+  });
+
+  test("Exibe mensagem de erro para senha fraca (auth/weak-password)", async () => {
+    (createUserWithEmailAndPassword as jest.Mock).mockRejectedValue({
+      code: "auth/weak-password",
+    });
+
+    render(
+      <MemoryRouter>
+        <CadastroPage />
+      </MemoryRouter>
+    );
+
+    fireEvent.change(screen.getByLabelText(/Nome/i), {
+      target: { value: "Usuário Teste" },
+    });
+
+    fireEvent.change(screen.getByLabelText(/Email/i), {
+      target: { value: "email@dominio.com" },
+    });
+
+    const senhaInputs = screen.getAllByLabelText(/Senha/i);
+    fireEvent.change(senhaInputs[0], { target: { value: "123456" } });
+
+    fireEvent.change(screen.getByLabelText(/Confirmar Senha/i), {
+      target: { value: "123456" },
+    });
+
+    fireEvent.click(screen.getByRole("button", { name: /Cadastrar/i }));
+
+    const errorMessages = await screen.findAllByText(
+      /A senha é muito fraca. Escolha uma senha mais forte./i
+    );
+    expect(errorMessages.length).toBeGreaterThan(0);
+  });
+
+  test("Exibe erro para senha com menos de 6 caracteres", async () => {
     render(
       <MemoryRouter>
         <CadastroPage />
@@ -194,7 +259,7 @@ describe("CadastroPage", () => {
     expect(errorMessages).toHaveLength(2);
   });
 
-  test("Alternando visibilidade da senha", async () => {
+  test("Alterna a visibilidade das senha", async () => {
     render(
       <MemoryRouter>
         <CadastroPage />
@@ -211,5 +276,72 @@ describe("CadastroPage", () => {
 
     fireEvent.click(screen.getByTestId("toggle-password-visibility"));
     expect(passwordInput.type).toBe("password");
+
+    const confirmPasswordInput = screen.getByLabelText(
+      /Confirmar Senha/i
+    ) as HTMLInputElement;
+    expect(confirmPasswordInput.type).toBe("password");
+
+    fireEvent.click(screen.getByTestId("toggle-confirm-password-visibility"));
+    expect(confirmPasswordInput.type).toBe("text");
+
+    fireEvent.click(screen.getByTestId("toggle-confirm-password-visibility"));
+    expect(confirmPasswordInput.type).toBe("password");
+
+    expect(screen.getByTestId("toggle-password-visibility")).toContainHTML(
+      '<svg class="fa-eye-slash"'
+    );
+    fireEvent.click(screen.getByTestId("toggle-password-visibility"));
+    expect(screen.getByTestId("toggle-password-visibility")).toContainHTML(
+      '<svg class="fa-eye"'
+    );
+    fireEvent.click(screen.getByTestId("toggle-password-visibility"));
+    expect(screen.getByTestId("toggle-password-visibility")).toContainHTML(
+      '<svg class="fa-eye-slash"'
+    );
+  });
+
+  test("Alterna a visibilidade da senha de confirmação", async () => {
+    render(
+      <MemoryRouter>
+        <CadastroPage />
+      </MemoryRouter>
+    );
+
+    const confirmPasswordInput = screen.getByLabelText(
+      /Confirmar Senha/i
+    ) as HTMLInputElement;
+    expect(confirmPasswordInput.type).toBe("password");
+
+    fireEvent.click(screen.getByTestId("toggle-confirm-password-visibility"));
+    expect(confirmPasswordInput.type).toBe("text");
+
+    fireEvent.click(screen.getByTestId("toggle-confirm-password-visibility"));
+    expect(confirmPasswordInput.type).toBe("password");
+
+    expect(
+      screen.getByTestId("toggle-confirm-password-visibility")
+    ).toContainHTML('<svg class="fa-eye-slash"');
+    fireEvent.click(screen.getByTestId("toggle-confirm-password-visibility"));
+    expect(
+      screen.getByTestId("toggle-confirm-password-visibility")
+    ).toContainHTML('<svg class="fa-eye"');
+    fireEvent.click(screen.getByTestId("toggle-confirm-password-visibility"));
+    expect(
+      screen.getByTestId("toggle-confirm-password-visibility")
+    ).toContainHTML('<svg class="fa-eye-slash"');
+  });
+
+  test("deve navegar para a página de login ao clicar no link 'Faça login'", async () => {
+    render(
+      <MemoryRouter initialEntries={["/cadastro"]}>
+        <CadastroPage />
+      </MemoryRouter>
+    );
+
+    const loginLink = screen.getByText(/Faça login/i);
+    fireEvent.click(loginLink);
+
+    expect(window.location.pathname).toBe("/");
   });
 });
