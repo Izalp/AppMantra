@@ -2,19 +2,38 @@
 
 # AppMantra - Aplicativo de Meditação 🌸
 
-## ✨ Visão Geral
+## *Visão Geral*  
 
-O **AppMantra** é um aplicativo de meditação construído com React e Firebase, oferecendo uma experiência de usuário intuitiva para iniciantes e praticantes de meditação. 
-O aplicativo possui funcionalidades de autenticação, permitindo que os usuários façam login para acessar conteúdos exclusivos de meditação.
+O **AppMantra** é um aplicativo de meditação desenvolvido com **React** no front-end e **Firebase** no back-end. Ele oferece uma experiência imersiva e acessível, tanto para iniciantes quanto para praticantes experientes de meditação. O AppMantra ajuda os usuários a incorporar a meditação em suas rotinas diárias.
 
-## 🛠️ Pré-requisitos
+## *Principais Funcionalidades*  
+
+- **Cadastro e Login de Usuário:**  
+  Criação de contas com e-mail e senha, proporcionando segurança e praticidade.  
+
+- **Redefinição de Senha:**  
+  Recuperação de senha via e-mail para restabelecimento do acesso à conta.  
+
+- **Execução de Áudios e Músicas de Meditação:**  
+  Biblioteca de áudios com meditações guiadas, músicas relaxantes e trilhas sonoras para foco e concentração.  
+
+- **Atualização de Perfil:**  
+  Permite a edição de informações pessoais, como nome, e-mail e preferências.  
+
+- **Exclusão de Conta:**  
+  Opção para excluir a conta diretamente no aplicativo, oferecendo controle total sobre os dados.  
+
+- **Logout:**  
+  Função de logout acessível para encerrar a sessão de forma segura.
+
+## *Pré-requisitos*
 
 Antes de começar, você precisará ter instalado em sua máquina:
 
 - [Node.js](https://nodejs.org/) (versão 14 ou superior) 
 - [npm](https://www.npmjs.com/) (geralmente instalado junto com o Node.js) 
 
-## 🚀 Instalação
+## *Instalação*
 
 1. **Clone o repositório**:
 
@@ -31,7 +50,7 @@ Antes de começar, você precisará ter instalado em sua máquina:
 
 Isso instalará todas as dependências listadas no package.json. 📥
 
-## 💻 Execução
+## *Execução*
 
 Para iniciar o aplicativo localmente, execute:
 
@@ -41,7 +60,7 @@ Para iniciar o aplicativo localmente, execute:
 
 🌐 O aplicativo estará disponível em http://localhost:3000. Você pode abrir esta URL em seu navegador para acessar o AppMantra.
 
-## 🧪 Execução de Testes
+## *Execução de Testes*
 
 O projeto inclui testes para as páginas e componentes principais. Para executar os testes, utilize:
 
@@ -49,7 +68,18 @@ O projeto inclui testes para as páginas e componentes principais. Para executar
     npm test
 ```
 
-## 👩‍💻 Autores
+## *Integração Contínua*
+
+O AppMantra utiliza GitHub Actions para automação do pipeline de integração contínua (CI/CD).
+
+O pipeline inclui:
+
+- **Build do Projeto:** Criação automática da versão mais recente do aplicativo a cada commit.
+- **Execução de Testes:** Relatórios de teste são gerados automaticamente a cada commit.
+- **Geração de Artefatos:** Os artefatos do build podem ser usados para deploy ou análise posterior.
+
+## *Autores*
+
 Desenvolvedores que contribuíram para a estruturação e desenvolvimento deste projeto:
 
 - **Iza Lopes Ribeiro**  
